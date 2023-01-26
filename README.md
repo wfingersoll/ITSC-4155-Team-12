@@ -19,8 +19,8 @@ randomly choose a film from their list.
 
     Make sure Make, Python, and Virtualenv are installed.
 
-    Run the command `make` in the backend directory to get started.
+    Run the command ```make``` in the backend directory to get started.
 
-    Run `make test` to make sure virtualenv is working (It will display a path through the \venv\ directory)
+    Run ```make test``` to make sure virtualenv is working (It will display a path through the \venv\ directory)
 
     
