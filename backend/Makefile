@@ -1,21 +1,24 @@
-PY = python3
-VENV = venv
-BIN=$(VENV)/bin
-ifeq ($(OS), Windows_NT)
-    BIN=$(VENV)/Scripts
-    PY=python
-endif
+.PHONY: venv install pre-commit clean
+PYTHON = $(shell python -c 'import sys; print(sys.executable)')
+VENV_PYTHON = .venv/Scripts/python.exe
 
-$(VENV): pyproject.toml
-	$(PY) -m venv $(VENV)
-	$(BIN)/poetry sync
-	touch $(VENV)
+init: clean venv install
+
+venv: $(PYTHON)
+	@echo "Creating .venv..."
+	virtualenv -V || pip install virtualenv
+	$(PYTHON) -m venv .venv
+	poetry -V || pip install --upgrade pip wheel setuptools poetry
+
+install: ${VENV_PYTHON}
+	@echo "Installing dependencies..."
+	poetry install --no-root --remove-untracked
 
 clean:
-	rm -rf $(VENV)
-	find . -type f -name *.pyc -delete
-	find . -type d -name __pycache__ -delete
+	@echo "Cleaning..."
+	if exist .\\.venv\\ ( rmdir .\\.venv /q /s )
+	if exist poetry.lock ( del poetry.lock /q /s )
 
-test: $(VENV)
-	$(BIN)/pip -V
-	$(BIN)/python tests/test_placeholder.py
+test:
+	@echo "Testing..."
+	${VENV_PYTHON} ./tests/test_placeholder.py
