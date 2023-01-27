@@ -5,20 +5,21 @@ VENV_PYTHON = .venv/Scripts/python.exe
 init: clean venv install
 
 venv: $(PYTHON)
-	@echo "Creating .venv..."
+	@echo Creating .venv...
 	virtualenv -V || pip install virtualenv
 	$(PYTHON) -m venv .venv
-	poetry -V || pip install --upgrade pip wheel setuptools poetry
+	poetry -V || ${VENV_PYTHON} -m pip install --upgrade pip wheel setuptools poetry
 
 install: ${VENV_PYTHON}
-	@echo "Installing dependencies..."
+	@echo Installing dependencies...
 	poetry install --no-root --remove-untracked
 
 clean:
-	@echo "Cleaning..."
+	@echo Cleaning...
 	if exist .\\.venv\\ ( rmdir .\\.venv /q /s )
 	if exist poetry.lock ( del poetry.lock /q /s )
+	if exist .pytest_cache ( rmdir .pytest_cache /q /s )
 
-test:
-	@echo "Testing..."
-	${VENV_PYTHON} ./tests/test_placeholder.py
+test: ${VENV_PYTHON}
+	@echo Testing...
+	poetry run pytest
