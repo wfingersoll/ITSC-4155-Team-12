@@ -17,14 +17,14 @@ randomly choose a film from their list.
 
 ## Backend 
 
+
 IT IS RECCOMENDED TO RUN VSCODE IN ADMINISTRATOR MODE IF YOU ARE ON WINDOWS
 
 Make sure Make, Python, and Virtualenv are installed.
+
 
 Run the command `make init` in the backend directory to get started.
 
 Run  `make test` to make sure virtualenv is working (It will display a path through the \venv\ directory)
 
 Run `make clean` to reset directory
-
-    
