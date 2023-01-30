@@ -13,10 +13,10 @@ randomly choose a film from their list.
     - NodeJS
     - Make
     - Python
+    - Pip
     - Virtualenv
 
 ## Backend 
-
 
 IT IS RECCOMENDED TO RUN VSCODE IN ADMINISTRATOR MODE IF YOU ARE ON WINDOWS
 
@@ -29,3 +29,15 @@ This project requires the preinstallation of Make, Pip, and Virtualenv.
 To setup, simply run the command: `make init` while in the backend directory.
 
 To test the project, simply run the command: `make test` while in the backend directory.
+
+If additional dependencies are needed, they can be added using the command: `poetry add \[DEPENDENCY NAME\]`
+
+## Frontend 
+
+Make sure that npm is installed before continuing.
+
+To get started, React can be installed with the command: `npm install react`
+
+After react is installed, navigate to the frontend directory and run the command: `npm start` to start the server.
+
+For more information, check the readme in the frontend directory.
