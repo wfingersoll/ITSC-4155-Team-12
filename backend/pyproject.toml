@@ -6,7 +6,7 @@ authors = ["William Ingersoll <wfingersoll@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.10"
 flask = "^2.2.2"
 pytest = "^7.2.1"
 pytest-cov = "^4.0.0"

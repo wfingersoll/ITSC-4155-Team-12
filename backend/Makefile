@@ -1,25 +1,29 @@
 .PHONY: venv install pre-commit clean
-PYTHON = $(shell python -c 'import sys; print(sys.executable)')
-VENV_PYTHON = .venv/Scripts/python.exe
+VENV_PYTHON = .venv/bin/python3
 
-init: clean venv install
+init: 
+	@$(MAKE) clean
+	@if [ "$(shell which poetry)" = "" ]; then \
+		$(MAKE) install-poetry; \
+	fi
+	@$(MAKE) setup-poetry
 
-venv: $(PYTHON)
-	@echo Creating .venv...
-	virtualenv -V || pip install virtualenv
-	$(PYTHON) -m venv .venv
-	poetry -V || ${VENV_PYTHON} -m pip install --upgrade pip wheel setuptools poetry
+install-poetry:
+	@echo Installing Poetry...
+	@curl -sSL https://install.python-poetry.org | python3 -
+	@$(eval include ${HOME}/.poetry/env)
 
-install: ${VENV_PYTHON}
-	@echo Installing dependencies...
-	poetry install --no-root --remove-untracked
+setup-poetry:
+	@echo Installing Dependecies...
+	@poetry config virtualenvs.in-project true
+	@poetry env use python3.10 && poetry install --sync
 
 clean:
 	@echo Cleaning...
-	if exist .\\.venv\\ ( rmdir .\\.venv /q /s )
-	if exist poetry.lock ( del poetry.lock /q /s )
-	if exist .pytest_cache ( rmdir .pytest_cache /q /s )
+	rm -rf .venv
+	rm -rf poetry.lock
+	rm -rf .pytest_cache
 
 test: ${VENV_PYTHON}
 	@echo Testing...
-	poetry run pytest
+	@poetry run pytest --cov-report xml:tests/coverage.xml --cov

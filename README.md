@@ -20,11 +20,12 @@ randomly choose a film from their list.
 
 IT IS RECCOMENDED TO RUN VSCODE IN ADMINISTRATOR MODE IF YOU ARE ON WINDOWS
 
-Make sure Make, Python, and Virtualenv are installed.
+The current project setup requires the use of a unix system, I highly recommend using the Windows Subsytem for Linux (WSL2: https://learn.microsoft.com/en-us/windows/wsl/install) if you want to use this project on Windows! If you are using Windows then the current iteration of Makefile will not work correctly.
 
+### Project Setup
 
-Run the command `make init` in the backend directory to get started.
+This project requires the preinstallation of Make, Pip, and Virtualenv.
 
-Run  `make test` to make sure virtualenv is working (It will display a path through the \venv\ directory)
+To setup, simply run the command: `make init` while in the backend directory.
 
-Run `make clean` to reset directory
+To test the project, simply run the command: `make test` while in the backend directory.

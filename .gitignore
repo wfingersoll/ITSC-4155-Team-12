@@ -7,3 +7,7 @@ __pycache__/
 
 #Poetry
 poetry.lock
+
+#Pytest
+.pytest_cache
+.coverage
