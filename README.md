@@ -30,7 +30,7 @@ To setup, simply run the command: `make init` while in the backend directory.
 
 To test the project, simply run the command: `make test` while in the backend directory.
 
-If additional dependencies are needed, they can be added using the command: `poetry add \[DEPENDENCY NAME\]`
+If additional dependencies are needed, they can be added using the command: `poetry add [DEPENDENCY NAME]`
 
 ## Frontend 
 
