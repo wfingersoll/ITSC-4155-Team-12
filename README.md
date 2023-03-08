@@ -41,3 +41,15 @@ To get started, React can be installed with the command: `npm install react`
 After react is installed, navigate to the frontend directory and run the command: `npm start` to start the server.
 
 For more information, check the readme in the frontend directory.
+
+# TO RUN PROJECT
+
+You must run flask app and react app seperately.
+
+for flask, make sure you are in the backend directory and run `poetry run flask run`
+
+for react, make sure you are in the frontend directory and run `npm start`
+
+# API
+
+Currently the only api endpoint is "/search-prod-info?query={query}"
