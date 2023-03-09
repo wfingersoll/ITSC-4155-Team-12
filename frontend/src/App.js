@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import axios from "axios";
-import './App.css';
+import './bootstrap.darkly.css';
 
 function App() {
     // new line start
@@ -11,40 +11,77 @@ function App() {
         event.preventDefault();
         axios({
             method: "GET",
-            url:"/search-prod-info?query="+query,
-        })
-        .then(response => {
+            url: "/search-prod-info?query=" + query,
+        }).then(response => {
             const res = response.data;
             setMovieData(({
-            movie_title: res.title,
-            director_name: res.director,
-            title_year: res.year}))
+                movie_title: res.title,
+                director_name: res.director,
+                title_year: res.year
+            }))
         })
     }
     //end of new line
 
     return (
-        <div class="row">
-            <h1>MovieDB</h1>
+        <div className="row">
+            <h1 className="mb-5">MovieDB</h1>
 
-            <div class="col-md-6">
+            {/*
+                Input box.
+                TODO: MAKE THIS A SEPARATE COMPONENT
+            */}
+            <div className="col-lg-6 mb-5">
                 <form onSubmit={getData}>
-                    <div class="mb-3">
-                        <label for="query-input-id" class="form-label">Enter Query:</label>
+                    <div className="mb-3">
+                        <label htmlFor="query-input-id" className="form-label">Enter Query:</label>
                         <input type="text"
-                               class="form-control"
+                               className="form-control"
                                id="query-input-id"
                                value={query}
                                onChange={e => setQuery(e.target.value)}
                         />
                     </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="submit" className="btn btn-primary">Submit</button>
                 </form>
             </div>
 
-            {//movieData &&
-                <div class="col-md-6">
-                    Result would go here
+            {/*
+                Output display
+                TODO: MAKE THIS A SEPARATE COMPONENT
+            */}
+            <div className="col-lg-6">
+                <h4>Film Name</h4>
+                <table className="table table-hover">
+                    <tbody>
+                        <tr>
+                            <th scope="row">Director</th>
+                            <td>Steven Spackles</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Release Date</th>
+                            <td>2032</td>
+                        </tr>
+                        {/* TODO: ADD MORE */}
+                    </tbody>
+                </table>
+            </div>
+
+            {movieData &&
+                <div className="col-lg-6">
+                    <h5>{movieData.movie_title}</h5>
+                    <table className="table">
+                        <tbody>
+                            <tr>
+                                <th scope="row">Director</th>
+                                <td>{movieData.director_name}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Release Date</th>
+                                <td>{movieData.title_year}</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             }
         </div>
