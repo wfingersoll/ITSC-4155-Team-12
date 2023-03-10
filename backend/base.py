@@ -1,7 +1,10 @@
 from flask import Flask
 from flask import request
 import pandas as pd
+
 from utils.string_transforms import string_to_list
+from recommendation import get_other_movies_based_on_content
+
 import json
 import pickle 
 from sklearn.feature_extraction.text import CountVectorizer
@@ -83,7 +86,7 @@ def search_prod_info():
             "genres": [],
         },
         'movie_score': {
-            'release': []
+            'year': []
         }
     }
     
@@ -93,11 +96,28 @@ def search_prod_info():
             for key in response_body['movie_data']:
                 response_body['movie_data'][key].extend(data[key].to_list())
 
+    if response_body['movie_data']['movie_title']:
+        for title in movie_score.loc[:, 'title']:
+            if(title.strip().lower()=='eraserhead'):
+                print('hi')
+            if(title.strip().lower()==response_body['movie_data']['movie_title'][0]):
+                row = movie_score.loc[movie_score['title']==title]
+                response_body['movie_score']['year'] = row['year'].values[0]
+
+    for section in response_body:
+        for entry in response_body[section]:
+            if not response_body[section][entry]:
+                response_body[section][entry] = ['Data Not Available']
+
+    index = movie_score.index[movie_score['title'].strip().lower() == response_body['movie_data']['movie_title']].tolist()
+    print(index)
+    content = get_other_movies_based_on_content()
+
     final_body = json.dumps({
-        'title': response_body['movie_data']['movie_title'][0],
-        'director': response_body['movie_data']['director_name'][0],
+        'title': response_body['movie_data']['movie_title'][0].capitalize(),
+        'director': response_body['movie_data']['director_name'][0].capitalize(),
         'genres': response_body['movie_data']['genres'],
-        'year': 'TEMP'
+        'year': response_body['movie_score']['year']
     })
 
     print(final_body)

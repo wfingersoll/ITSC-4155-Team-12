@@ -17,6 +17,7 @@ function App() {
             setMovieData(({
                 movie_title: res.title,
                 director_name: res.director,
+                genres: res.genres,
                 title_year: res.year
             }))
         })
@@ -46,27 +47,6 @@ function App() {
                 </form>
             </div>
 
-            {/*
-                Output display
-                TODO: MAKE THIS A SEPARATE COMPONENT
-            */}
-            <div className="col-lg-6">
-                <h4>Film Name</h4>
-                <table className="table table-hover">
-                    <tbody>
-                        <tr>
-                            <th scope="row">Director</th>
-                            <td>Steven Spackles</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Release Date</th>
-                            <td>2032</td>
-                        </tr>
-                        {/* TODO: ADD MORE */}
-                    </tbody>
-                </table>
-            </div>
-
             {movieData &&
                 <div className="col-lg-6">
                     <h5>{movieData.movie_title}</h5>
@@ -75,6 +55,10 @@ function App() {
                             <tr>
                                 <th scope="row">Director</th>
                                 <td>{movieData.director_name}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Genres</th>
+                                <td>{movieData.genres}</td>
                             </tr>
                             <tr>
                                 <th scope="row">Release Date</th>
