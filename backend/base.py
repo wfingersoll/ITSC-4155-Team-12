@@ -3,6 +3,25 @@ from flask import request
 import pandas as pd
 from utils.string_transforms import string_to_list
 import json
+import pickle 
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+
+#load the nlp model and the tfid vect 
+nlp_model = 'models/nlo_model.pkl'
+#open the file in binary format: read
+
+#function for similairty
+def create_similarity():
+    data = pd.read_csv("final_data/new_moviedata.csv")
+    #create the count matrix as cv
+    cv = CountVectorizer()
+    #create the matrix based on the column comb which is the combination of them all 
+    count_matrix = cv.fit_transform(data['comb'])
+    #create the similiaity score matrix 
+    similarity = cosine_similarity(count_matrix)
+    return data, similarity 
+
 
 api = Flask(__name__)
 
