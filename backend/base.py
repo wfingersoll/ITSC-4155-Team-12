@@ -45,7 +45,7 @@ def rec(m): #movies -> m
         m_list = m_list[1:11]
         #create empty array to add the movie titles 
         l = []
-        for i in range(len(list)):
+        for i in range(len(m_list)):
             u =m_list[i][0]
             l.append(data['movie_title'][u])
         return l 
