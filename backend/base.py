@@ -107,12 +107,14 @@ def search_prod_info():
 @api.route('/get-page')
 def get_page():
     
-    page_num = request.args.get('page_num', default=1, type=int)
-    page_length = request.args.get('page_length', default=18, type=int)
+    page_num = request.args.get('page_num', type=int)
+    page_length = int(request.args['page_length'])
 
     movie_data = pd.read_csv("final_data/new_moviedata.csv")
 
     total_pages = len(movie_data)/page_length
+
+    print(page_num)
 
     #Make sure page num is within the max pages
     if(page_num>total_pages):
@@ -122,6 +124,9 @@ def get_page():
     end_index = (page_length*page_num)+page_length
 
     titles = movie_data['movie_title'].values.tolist()
+    for index, title in enumerate(titles):
+        titles[index] = title.title()
+
     page_titles = titles[start_index:end_index]
 
     response_body = json.dumps({
