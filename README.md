@@ -53,3 +53,21 @@ for react, make sure you are in the frontend directory and run `npm start`
 # API
 
 Currently the only api endpoint is "/search-prod-info?query={query}"
+
+## Architecture 
+## Cosine Similarity 
+How does it work? 
+Cosine similarity is a technique used to determine how similar two documents or vectors are, regardless of their size. It works by measuring the cosine of the angle between the two vectors when they are represented in a multi-dimensional space.
+
+Think of it like this: you have a movie recommendation system that recommends movies based on the similarity of their plot summaries. Each movie is represented by a vector that contains information about the words and phrases used in the plot summary. For example, the plot summary for the movie "The Godfather" might be represented by a vector that includes words like "mafia", "family", and "crime".
+
+When a user searches for a movie to watch, their search query is represented by a vector. The system then compares the user's query vector to the vectors of all the movies in the database using cosine similarity.
+
+If the cosine similarity between the user's query and a particular movie vector is high, that means the plot summary of the movie is very similar to the user's search query. This suggests that the movie may be a good recommendation for the user.
+
+On the other hand, if the cosine similarity between the user's query and a particular movie vector is low, that means the plot summary of the movie is not very similar to the user's search query. This suggests that the movie may not be a good recommendation for the user.
+
+In this way, cosine similarity helps the recommendation system to find movies that are most similar to the user's search query, regardless of the length or complexity of the plot summaries.
+
+
+
