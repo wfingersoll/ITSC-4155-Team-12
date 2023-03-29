@@ -1,17 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import '../bootstrap.darkly.css';
+import { useParams } from "react-router-dom";
 
-const Search = () => {
-    // new line start
-    const [query, setQuery] = useState('')
+
+const Film = () => {
+
+    const {title} = useParams()
     const [movieData, setMovieData] = useState(null)
+    
+    useEffect(() => {
+        getData();
+    }, []);
 
-    const getData = event => {
-        event.preventDefault();
+    const getData = async() => {
         axios({
             method: "GET",
-            url: "/search-prod-info?query=" + query,
+            url: "/search-prod-info?query=" + title,
         }).then(response => {
             const res = response.data;
             setMovieData(({
@@ -29,25 +34,6 @@ const Search = () => {
     return (
         <div className="row">
             <h1 className="mb-5">MovieDB</h1>
-
-            {/*
-                Input box.
-                TODO: MAKE THIS A SEPARATE COMPONENT
-            */}
-            <div className="col-lg-6 mb-5">
-                <form onSubmit={getData}>
-                    <div className="mb-3">
-                        <label htmlFor="query-input-id" className="form-label">Enter Query:</label>
-                        <input type="text"
-                               className="form-control"
-                               id="query-input-id"
-                               value={query}
-                               onChange={e => setQuery(e.target.value)}
-                        />
-                    </div>
-                    <button type="submit" className="btn btn-primary">Submit</button>
-                </form>
-            </div>
 
             {movieData &&
                 <div className="col-lg-6">
@@ -82,4 +68,4 @@ const Search = () => {
     )
 }
 
-export default Search;
+export default Film;

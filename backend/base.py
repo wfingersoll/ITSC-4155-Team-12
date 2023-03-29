@@ -52,11 +52,7 @@ def convert_to_list(my_list):
     #replacing the brackets []
     my_list[0] = my_list[0].replace('["', '')
     my_list[-1] = my_list[-1].replace('"]', '')
-    return my_list
-
-# def get_suggestions():
-#     data = pd.read_csv("final_data/new_moviedata.csv")
-#     return list(data['movie_title'].str.capitalize()) #return movies with titles capitalized 
+    return my_list 
 
 api = Flask(__name__)
 
@@ -84,12 +80,14 @@ def search_prod_info():
             'movie_title': [],
             "director_name": [],
             "genres": [],
-            "overview": [],
-            "poster_path": [],
-            "streaming_services": []
         },
         'movie_score': {
             'release': []
+        },
+        'tmdb_info': {
+            "overview": [],
+            "poster_path": [],
+            "streaming_services": []
         }
     }
     
@@ -101,38 +99,38 @@ def search_prod_info():
 
 
     #call tmdb api to retrieve the additional movie information - streaming services 
-    response = requests.get(f"https://api.themoviedb.org/3/movie/550?api_key={API_KEY}&query={query}")
+    response = requests.get(f"https://api.themoviedb.org/3/search/movie?api_key={API_KEY}&query={query}")
     results = response.json().get('results')
 
+    info = results[0]
+
     if results:
-        tmdb_movie = results[0]
-
         #add overview poster and release data to the body 
-        response_body['movie_data']['overview'] = tmdb_movie.get('overview', '')
-        response_body['movie_data']['poster_path'] = tmdb_movie.get('poster_path', '')
-        response_body['movie_data']['release'] = tmdb_movie.get('release_date', '')
+        response_body['tmdb_info']['overview'] = info.get('overview', '')
+        response_body['tmdb_info']['poster_path'] = info.get('poster_path', '')
+        response_body['movie_score']['release'] = info.get('release_date', '')
 
-    # movie_info_extra = pd.read_csv('data/movies_metadata.csv')
-    # release_date = movie_info_extra.loc[movie_info_extra['original_title'].astype(str).str.lower() == response_body['movie_data']['movie_title'][0]]
-   
+        # movie_info_extra = pd.read_csv('data/movies_metadata.csv')
+        # release_date = movie_info_extra.loc[movie_info_extra['original_title'].astype(str).str.lower() == response_body['movie_data']['movie_title'][0]]
+    
         #call the tmdb api to get the atreaming services available
-        response = requests.get(f"https://api.themoviedb.org/3/movie/{tmdb_movie['id']}/watch/providers?api_key={API_KEY}")
+        response = requests.get(f"https://api.themoviedb.org/3/movie/{info['id']}/watch/providers?api_key={API_KEY}")
         providers = response.json().get('results', {}).get('US', {}).get('flatrate', [])
-
         #add streaming services to the response body 
-        response_body['movie_data']['streaming_services'] = [provider.get('provider_name', '') for provider in providers]
+        response_body['tmdb_info']['streaming_services'] = [provider.get('provider_name', '') + ",\n" for provider in providers]
 
 
     similar_films = rec(response_body['movie_data']['movie_title'][0], movie_data)
+    similar_films = [word.title() for word in similar_films]
 
     final_body = json.dumps({
         'title': response_body['movie_data']['movie_title'][0],
         'director': response_body['movie_data']['director_name'][0],
         'genres': response_body['movie_data']['genres'],
-        'overview': response_body['movie_data']['overview'],
-        'poster_path': response_body['movie_data']['poster_path'],
+        'overview': response_body['tmdb_info']['overview'],
+        'poster_path': response_body['tmdb_info']['poster_path'],
         'year': response_body['movie_score']['release'],
-        'streaming_services': response_body['movie_data']['streaming_services'],
+        'streaming_services': response_body['tmdb_info']['streaming_services'],
         'similar': similar_films
     })
 
@@ -148,8 +146,6 @@ def get_page():
 
     total_pages = len(movie_data)/page_length
 
-    print(page_num)
-
     #Make sure page num is within the max pages
     if(page_num>total_pages):
         page_num = int(total_pages-1)
@@ -162,9 +158,21 @@ def get_page():
         titles[index] = title.title()
 
     page_titles = titles[start_index:end_index]
+    
+    poster_paths = []
+    for title in page_titles:
+        response = requests.get(f"https://api.themoviedb.org/3/search/movie?api_key={API_KEY}&query={title}")
+        results = response.json().get('results')
+
+        info = results[0]
+
+        if(info.get('poster_path')):
+           url = 'https://image.tmdb.org/t/p/original/'+info.get('poster_path')
+           poster_paths.append(url)
 
     response_body = json.dumps({
-        'titles': page_titles
+        'titles': page_titles,
+        'poster_paths': poster_paths
     })
 
     return response_body

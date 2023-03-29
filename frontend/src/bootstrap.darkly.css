@@ -94,7 +94,20 @@
   }
 }
 
-prev, next {
+.page-controls {
+  display: inline-block;
+  width: 100%;
+}
+
+.page-search {
+  display: inline-block;
+  background-color: white;
+  color:black;
+  width: 44px;
+}
+
+.prev, .next {
+  display: inline-block;
   background: #fff;
   border: none;
   padding: 10px;
@@ -103,6 +116,8 @@ prev, next {
   margin: 0 10px;
   cursor: pointer;
 }
+
+
 
 prev.disabled,
 next.disabled {
@@ -356,6 +371,8 @@ th {
   border-color: inherit;
   border-style: solid;
   border-width: 1px;
+  align-items: center;
+  text-align: center;
 }
 
 label {
@@ -363,7 +380,7 @@ label {
 }
 
 button {
-  border-radius: 0;
+  border-radius: 12;
 }
 
 button:focus:not(:focus-visible) {
