@@ -6,6 +6,8 @@ import pickle
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np 
+import requests  
+import os
 
 #load the nlp model and the tfid vect 
 nlp_model = 'models/nlp_model.pkl'
@@ -53,10 +55,17 @@ def convert_to_list(my_list):
     return my_list
 
 # def get_suggestions():
-#     datat = pd.read_csv("final_data/new_moviedata.csv")
+#     data = pd.read_csv("final_data/new_moviedata.csv")
 #     return list(data['movie_title'].str.capitalize()) #return movies with titles capitalized 
 
 api = Flask(__name__)
+
+TMDB_API_KEY = "21742194230c942f4f9ca9b6b7e27659"
+API_KEY = os.environ.get("TMDB_API_KEY")
+
+if API_KEY is None:
+    print("API_KEY environment variable is not set.")
+    exit()
 
 @api.route('/search-prod-info')
 def search_prod_info():
@@ -75,6 +84,9 @@ def search_prod_info():
             'movie_title': [],
             "director_name": [],
             "genres": [],
+            "overview": [],
+            "poster_path": [],
+            "streaming_services": []
         },
         'movie_score': {
             'release': []
@@ -88,9 +100,28 @@ def search_prod_info():
                 response_body['movie_data'][key].extend(data[key].to_list())
 
 
-    movie_info_extra = pd.read_csv('data/movies_metadata.csv')
-    release_date = movie_info_extra.loc[movie_info_extra['original_title'].astype(str).str.lower() == response_body['movie_data']['movie_title'][0]]
+    #call tmdb api to retrieve the additional movie information - streaming services 
+    response = requests.get(f"https://api.themoviedb.org/3/movie/550?api_key={API_KEY}&query={query}")
+    results = response.json().get('results')
+
+    if results:
+        tmdb_movie = results[0]
+
+        #add overview poster and release data to the body 
+        response_body['movie_data']['overview'] = tmdb_movie.get('overview', '')
+        response_body['movie_data']['poster_path'] = tmdb_movie.get('poster_path', '')
+        response_body['movie_data']['release'] = tmdb_movie.get('release_date', '')
+
+    # movie_info_extra = pd.read_csv('data/movies_metadata.csv')
+    # release_date = movie_info_extra.loc[movie_info_extra['original_title'].astype(str).str.lower() == response_body['movie_data']['movie_title'][0]]
    
+        #call the tmdb api to get the atreaming services available
+        response = requests.get(f"https://api.themoviedb.org/3/movie/{tmdb_movie['id']}/watch/providers?api_key={API_KEY}")
+        providers = response.json().get('results', {}).get('US', {}).get('flatrate', [])
+
+        #add streaming services to the response body 
+        response_body['movie_data']['streaming_services'] = [provider.get('provider_name', '') for provider in providers]
+
 
     similar_films = rec(response_body['movie_data']['movie_title'][0], movie_data)
 
@@ -98,7 +129,10 @@ def search_prod_info():
         'title': response_body['movie_data']['movie_title'][0],
         'director': response_body['movie_data']['director_name'][0],
         'genres': response_body['movie_data']['genres'],
-        'year': release_date['release_date'].values[0],
+        'overview': response_body['movie_data']['overview'],
+        'poster_path': response_body['movie_data']['poster_path'],
+        'year': response_body['movie_score']['release'],
+        'streaming_services': response_body['movie_data']['streaming_services'],
         'similar': similar_films
     })
 
