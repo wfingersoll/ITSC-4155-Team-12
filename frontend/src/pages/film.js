@@ -25,7 +25,8 @@ const Film = () => {
                 genres: res.genres,
                 title_year: res.year,
                 platforms: res.streaming_services,
-                similar: res.similar
+                similar: res.similar,
+                poster: res.poster_path
             }))
         })
     }
@@ -33,32 +34,31 @@ const Film = () => {
 
     return (
         <div className="row">
-            <h1 className="mb-5">MovieDB</h1>
-
             {movieData &&
-                <div className="col-lg-6">
-                    <h5>{movieData.movie_title}</h5>
-                    <table className="table">
+                <div className="individual-film-container">
+                    <h1>{movieData.movie_title}</h1>
+                    <img className="individual-film-image" src={movieData.poster} width="256" height="428" />
+                    <table className="individual-film-table">
                         <tbody>
                             <tr>
                                 <th scope="row">Director</th>
-                                <td>{movieData.director_name}</td>
+                                <td className="individual-film-td">{movieData.director_name}</td>
                             </tr>
                             <tr>
                                 <th scope="row">Genres</th>
-                                <td>{movieData.genres}</td>
+                                <td className="individual-film-td">{movieData.genres}</td>
                             </tr>
                             <tr>
                                 <th scope="row">Release Date</th>
-                                <td>{movieData.title_year}</td>
+                                <td className="individual-film-td">{movieData.title_year}</td>
                             </tr>
                             <tr>
                                 <th scope="row">Streaming Platforms</th>
-                                <td>{movieData.platforms}</td>
+                                <td className="individual-film-td">{movieData.platforms}</td>
                             </tr>
                             <tr>
                                 <th scope="row">Similar Films</th>
-                                {movieData.similar.map((film) => <ul>{film}</ul>)}
+                                <td className="individual-film-td">{movieData.similar.map((film) => <ul>{film}</ul>)}</td>
                             </tr>
                         </tbody>
                     </table>

@@ -7,19 +7,30 @@ const Home = () => {
     const [pageNumber, setPageNumber] = useState(0)
     const[pageLength, setPageLength] = useState(18)
     const [movieData, setMovieData] = useState(null)
-    const [buttonDisabled, setButtonDisabled] = useState(true)
+    const [prevButtonDisabled, setPrevButtonDisabled] = useState(true)
+    const [nextButtonDisabled, setNextButtonDisabled] = useState(false)
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         getData();
-    }, [pageNumber, buttonDisabled]);
+    }, [pageNumber, prevButtonDisabled, nextButtonDisabled]);
 
     const getData = async () => {
 
+        setLoading(true);
+
         if (pageNumber != 0) {
-            setButtonDisabled(false)
+            setPrevButtonDisabled(false)
         }
         else{
-            setButtonDisabled(true)
+            setPrevButtonDisabled(true)
+        }
+
+        if (pageNumber==298){
+            setNextButtonDisabled(true)
+        }
+        else{
+            setNextButtonDisabled(false)
         }
 
         axios({
@@ -30,7 +41,9 @@ const Home = () => {
             setMovieData(({
                 titles : res.titles,
                 posters : res.poster_paths,
-            }))
+                length: res.length,
+            }));
+            setLoading(false)
         })
     } 
 
@@ -44,43 +57,61 @@ const Home = () => {
 
     const goToPageNumber = (event) => {
         const pageNum = parseInt(event.target.textContent);
-        setPageNumber(pageNum);
+        if (pageNum>=movieData.length) {
+            setPageNumber(movieData.length)
+        }
+        else {
+            setPageNumber(pageNum);
+        }
     }
   return (
     
     //Currently hacky solution that relies on us only taking 18 items per page
     <div>
-        {movieData && 
+        {loading && !movieData &&
             <div>
-                <h1>Welcome to MovieDB</h1>
+                <h1 className="loading"> Loading Films... </h1>
+                </div>
+        }
+        {movieData && 
+            <div className="film-grid">
+                <h1 className="film-grid-header">Welcome to MovieDB</h1>
                 <table>
                     <tbody>
                         <tr>
                             {movieData.titles.slice(0, 6).map((title, idx) => 
-                            <td><a href={"/film/"+title}><img src={movieData.posters[idx]} width="64" height="100"></img></a><br/>{title}</td>)}
+                            <td className="film-grid-td"><a href={"/film/"+title}><img className="film-grid-image" src={movieData.posters[idx]} ></img></a><br/>{title}</td>)}
                         </tr>
                         <tr>
                             {movieData.titles.slice(6, 12).map((title, idx) => 
-                            <td><img src={movieData.posters[idx+6]} width="64" height="100"></img><br/>{title}</td>)}
+                            <td className="film-grid-td"><a href={"/film/"+title}><img className="film-grid-image" src={movieData.posters[idx+6]} ></img></a><br/>{title}</td>)}
                         </tr>
                         <tr>
                             {movieData.titles.slice(12, 18).map((title, idx) => 
-                            <td><img src={movieData.posters[idx+12]} width="64" height="100"></img><br/>{title}</td>)}
+                            <td className="film-grid-td"><a href={"/film/"+title}><img className="film-grid-image" src={movieData.posters[idx+12]} ></img></a><br/>{title}</td>)}
                         </tr>
                     </tbody>
                 </table>
             </div>
         }
+    {movieData &&
     <div className="page-controls">
-        <button className="prev" disabled={buttonDisabled} onClick={goToPrevPage}>previous</button>
-                <form onSubmit={goToPageNumber}>
-                        <input type="text"
-                               id="page-input-id"
-                               className="page-search"/>
-                    <button type="submit" className="btn btn-primary">Submit</button>
-                </form>
-            </div>
-        <button className="next" onClick={goToNextPage}>next</button>
+    <h4 className="loading">{'Page : ' + pageNumber + ' / ' + movieData.length}</h4>
+        <button className="prev" disabled={prevButtonDisabled} onClick={goToPrevPage}>PREVIOUS</button>
+        <form className="page-search" onSubmit={goToPageNumber}>
+                <input type="text"
+                        id="page-input-id"
+                        className="page-search-box"
+                        onChange={(e) => (parseInt(e.target.value) < 298 ? setPageNumber(e.target.value): setPageNumber(movieData.length))}
+                        />
+        </form>
+        <button className="next" disabled={nextButtonDisabled} onClick={goToNextPage}>NEXT</button>
+    </div>
+    }
+    {loading && movieData &&
+        <h3 className="loading">Loading...</h3>
+    }    
+    
     </div>
   );
 };
