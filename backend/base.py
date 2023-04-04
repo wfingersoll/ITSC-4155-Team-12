@@ -179,3 +179,30 @@ def get_page():
     })
 
     return response_body
+
+@api.route('/get-film-queue')
+def get_film_queue():
+
+    titles = ['Eraserhead', 'Top Gun']
+
+    poster_paths = []
+    for title in titles:
+        response = requests.get(f"https://api.themoviedb.org/3/search/movie?api_key={API_KEY}&query={title}")
+        results = response.json().get('results')
+        
+        if len(results)>0:
+            info = results[0]
+
+            if(info.get('poster_path')):
+                url = 'https://image.tmdb.org/t/p/original/'+info.get('poster_path')
+                poster_paths.append(url)
+        
+        else:
+            poster_paths.append('https://user-images.githubusercontent.com/24848110/33519396-7e56363c-d79d-11e7-969b-09782f5ccbab.png')
+
+    response_body = json.dumps({
+        'titles': titles,
+        'posters': poster_paths
+    })
+
+    return response_body
