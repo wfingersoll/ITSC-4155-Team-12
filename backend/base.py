@@ -8,6 +8,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np 
 import requests  
 import os
+from pymongo import MongoClient
 
 #load the nlp model and the tfid vect 
 nlp_model = 'models/nlp_model.pkl'
@@ -55,6 +56,10 @@ def convert_to_list(my_list):
     return my_list 
 
 api = Flask(__name__)
+
+#for user db
+client = MongoClient("mongodb://localhost:27017")
+db = client.users
 
 TMDB_API_KEY = "21742194230c942f4f9ca9b6b7e27659"
 API_KEY = os.environ.get("TMDB_API_KEY")
