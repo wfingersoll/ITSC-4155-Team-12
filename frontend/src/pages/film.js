@@ -11,7 +11,7 @@ const Film = () => {
     
     useEffect(() => {
         getData();
-    }, []);
+    }, [title]);
 
     const getData = async() => {
         axios({

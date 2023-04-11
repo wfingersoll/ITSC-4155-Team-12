@@ -95,57 +95,95 @@
 }
 
 .dropdown-queue {
+  overflow: hidden;
+  height: 230px;
   width: 100%;
-  position: relative;
+  transition: height .3s;
+}
+
+.dropdown-queue-closed{
+  overflow: hidden;
+  height: 2px;
+  transition: height .3s;
 }
 
 .dropdown-button {
-  position: relative;
+  margin-left: 12px;
+  background-color: none;
+  border: none;
 }
 
 .menu-queue {
-  background-color: gray;
+  background-image: linear-gradient(180deg, rgb(65, 110, 157) 50%, rgb(44, 66, 116));
   padding: 0;
-  border: 2px solid black;
+  border: 2px solid rgb(21, 21, 21);
+  border-radius: 8px;
+  box-shadow: 2px 5px var(--bs-gray-900);
   width: 100%;
-  table-layout: fixed;
+  height: 100%;
 }
 
+
 .film-queue-random-link-container {
-  top: 0;
 }
 
 .film-queue-random-button {
-  position: relative;
-  padding: 5px;
-  background-color: var(--bs-info);
-  border: solid 2px black;
+  background-image: linear-gradient(144deg,#e83e8c, #6610f2 50%,#3498db);
+  border: 0;
+  border-radius: 8px;
+  box-shadow: rgba(151, 65, 252, 0.2) 0 15px 30px -5px;
+  box-sizing: border-box;
+  color: #FFFFFF;
+  display: flex;
+  font-size: 18;
+  justify-content: center;
+  line-height: 1em;
+  padding: 8px;
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+}
+
+.film-queue-random-button:hover{
+  padding: 12px;
+  border: 2px solid white;
 }
 
 .film-queue-td{
   text-align: center;
   width:10%;
-  position: relative;
   padding: 10px;
 }
 
+
 .film-queue-link-container{
-  position: relative;
 }
 
 .film-queue-link-container-disabled {
-  position: relative;
   cursor: not-allowed;
   pointer-events: none;
 }
 
 .film-queue-image{
+  border: 1px solid white;
   width: 64px;
   height: 96px;
+  transition: height .15s, width .15s;
+}
+
+.film-queue-image:hover{
+  width: 84px;
+  height: 116px;
+  transition: height .15s, width .15s;
+
 }
 
 .film-queue-text {
   font-size: 12px;
+  text-shadow: 2px 2px black;
+  max-height: 10px;
 }
 
 .individual-film-container {
@@ -176,12 +214,14 @@
   font-size: 20px;
 }
 
+
 .film-grid {
   width: 100%;
   text-align: center;
 }
 
 .film-grid-table {
+  border-collapse: separate;
   border-spacing: 15px;
 }
 
@@ -200,15 +240,19 @@
 }
 
 .film-grid-link-container {
-  position: relative;
   margin-top: 0px;
-  display: flex;  
 }
 
 .film-grid-image {
   padding: 2px;
   position: relative;
-  width: 10.5vw;
+  max-width: 200px;
+  max-height: 280px;
+}
+
+.film-grid-image:hover {
+  max-height: 320px;
+  max-width: 240px;
 }
 
 .film-grid-text {
@@ -216,6 +260,11 @@
   height: 70px;
   text-align: center;
   vertical-align: middle;
+}
+
+.film-grid-button {
+  padding:10px;
+  
 }
 
 .loading {
@@ -234,7 +283,8 @@
 }
 
 .page-search-box {
-  border: solid 2px black;
+  border: solid 2px rgb(101, 101, 101);
+  border-radius: 4px;
   background-color: lightgray;
   color: black;
   width: 36px;
@@ -244,22 +294,48 @@
 
 .prev, .next {
   display: inline;
-  border: none;
-  color: white;
-  background-color: var(--bs-info);
   border: solid 2px black;
   margin: 0 10px;
+  cursor: pointer;
+  background-image: linear-gradient(144deg,#e83e8c, #6610f2 50%,#3498db);
+  border: 0;
+  border-radius: 8px;
+  box-shadow: rgba(151, 65, 252, 0.2) 0 15px 30px -5px;
+  box-sizing: border-box;
+  color: #FFFFFF;
+  font-size: 18;
+  justify-content: center;
+  line-height: 1em;
+  padding: 8px;
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
   cursor: pointer;
 }
 
 .prev-disabled,
 .next-disabled {
   display: inline;
-  pointer-events: none;
-  box-shadow: none;
-  color: #999;
+  border: solid 2px black;
   margin: 0 10px;
-  background-color: grey;
+  cursor: pointer;
+  background-image: linear-gradient(144deg,#e83e8c, #6610f2 50%,#3498db);
+  border: 0;
+  border-radius: 8px;
+  box-shadow: rgba(151, 65, 252, 0.2) 0 15px 30px -5px;
+  box-sizing: border-box;
+  color: #FFFFFF;
+  font-size: 18;
+  justify-content: center;
+  line-height: 1em;
+  padding: 8px;
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  filter: saturate(10%);
 }
 
 .search-container {

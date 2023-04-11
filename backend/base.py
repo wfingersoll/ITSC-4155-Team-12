@@ -200,7 +200,7 @@ def get_page():
 @api.route('/get-film-queue')
 def get_film_queue():
 
-    titles = ['Eraserhead', 'Top Gun']
+    titles = ['Eraserhead', 'Top Gun', 'Hellraiser', 'Pirates Of The Caribbean: On Stranger Tides']
 
     poster_paths = []
     for title in titles:
@@ -223,3 +223,10 @@ def get_film_queue():
     })
 
     return response_body
+
+@api.route('/post-film-queue')
+def post_film_queue():
+
+    title = request.args.get('title', type=str)
+
+    print(title)
