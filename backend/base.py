@@ -9,7 +9,8 @@ import numpy as np
 import requests  
 import os
 from pymongo import MongoClient
-from mongoengine import connect, StringField, IntField, ListField, Document
+from mongoengine import connect, StringField, IntField, ListField, Document, BinaryField
+import bcrypt 
 
 #load the nlp model and the tfid vect 
 nlp_model = 'models/nlp_model.pkl'
@@ -67,9 +68,18 @@ connect('users')
 class User(Document):
     first_name = StringField(required = True)
     last_name = StringField(required = True)
-    email = StringField(required = True)
-    #password = 
-    #movie specific for user 
+    email = StringField(required = True, unique = True)
+    password_hash = BinaryField(required=True)
+
+    def set_password(self, password):
+        password_bytes = password.encode('utf-8')
+        salt = bcrypt.gensalt()
+        self.password_hash = bcrypt.hashpw(password_bytes, salt)
+
+    def check_password(self, password):
+        password_bytes = password.encode('utf-8')
+        return bcrypt.checkpw(password_bytes, self.password_hash)
+    
     movie = ListField(StringField())
 
 #tmdb api connect
