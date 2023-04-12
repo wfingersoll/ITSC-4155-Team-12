@@ -19,8 +19,6 @@ const Home = () => {
 
         setLoading(true);
 
-        console.log(prevButtonDisabled)
-
         if (pageNumber != 0) {
             setPrevButtonDisabled(false)
         }
@@ -83,7 +81,13 @@ const Home = () => {
                     <tbody>
                         <tr>
                             {movieData.titles.slice(0, 6).map((title, idx) => 
-                            <td className="film-grid-td"><a className="film-grid-link-container" href={"/film/"+title}><img className="film-grid-image" src={movieData.posters[idx]} ></img></a><p className="film-grid-text">{title}</p></td>)}
+                            <td className="film-grid-td">
+                                <a className="film-grid-link-container" href={"/film/"+title}>
+                                <img className="film-grid-image" src={movieData.posters[idx]} ></img></a>
+                                <p className="film-grid-text">{title}</p>
+                                <button className="film-grid-button">Add to Queue</button>
+                                </td>
+                                )}
                         </tr>
                         <tr>
                             {movieData.titles.slice(6, 12).map((title, idx) => 

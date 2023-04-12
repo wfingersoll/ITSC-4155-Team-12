@@ -18,6 +18,7 @@ spacy = "^3.5.0"
 sklearn = "^0.0.post1"
 scikit-learn = "^1.2.1"
 python-dotenv = "^0.21.1"
+mongoengine = "^0.27.0"
 
 
 [tool.poetry.group.dev.dependencies]
