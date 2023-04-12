@@ -19,8 +19,6 @@ const Home = () => {
 
         setLoading(true);
 
-        console.log(prevButtonDisabled)
-
         if (pageNumber != 0) {
             setPrevButtonDisabled(false)
         }

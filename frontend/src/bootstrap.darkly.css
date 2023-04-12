@@ -250,10 +250,6 @@
   max-height: 280px;
 }
 
-.film-grid-image:hover {
-  max-height: 320px;
-  max-width: 240px;
-}
 
 .film-grid-text {
   width: 100%;

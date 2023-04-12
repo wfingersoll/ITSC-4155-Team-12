@@ -11,6 +11,26 @@ import os
 from pymongo import MongoClient
 from mongoengine import connect, StringField, IntField, ListField, Document
 
+
+movie_data = pd.read_csv("final_data/new_moviedata.csv")
+movie_score = pd.read_csv("final_data/movie_score.csv")
+
+#for user db 
+client = MongoClient("mongodb://localhost:27017")
+db = client.users
+
+connect('users')
+# user model created 
+class User(Document):
+    first_name = StringField(required = True)
+    last_name = StringField(required = True)
+    email = StringField(required = True)
+    #movies specific for user 
+    movies = ListField(StringField())
+
+
+
+
 #load the nlp model and the tfid vect 
 nlp_model = 'models/nlp_model.pkl'
 #open the file in binary format: read
@@ -58,19 +78,6 @@ def convert_to_list(my_list):
 
 api = Flask(__name__)
 
-#for user db 
-client = MongoClient("mongodb://localhost:27017")
-db = client.users
-
-connect('users')
-# user model created 
-class User(Document):
-    first_name = StringField(required = True)
-    last_name = StringField(required = True)
-    email = StringField(required = True)
-    #password = 
-    #movie specific for user 
-    movie = ListField(StringField())
 
 #tmdb api connect
 TMDB_API_KEY = "21742194230c942f4f9ca9b6b7e27659"
@@ -83,8 +90,6 @@ if API_KEY is None:
 @api.route('/search-prod-info')
 def search_prod_info():
 
-    movie_data = pd.read_csv("final_data/new_moviedata.csv")
-    movie_score = pd.read_csv("final_data/movie_score.csv")
 
     query = request.args.get('query', default=None, type=str)
     
@@ -150,13 +155,46 @@ def search_prod_info():
 
     return final_body
 
+@api.route('/list-search')
+def listsearch():
+
+    query = request.args.get('query', default=None, type=str)
+    
+    #Since everything in the dataframe is a float, we have this stupid solution
+    if(query.isdigit()):
+        query+=".0"
+    
+    titles = movie_data[movie_data.movie_title.str.contains(query.lower())]['movie_title'].values.tolist()[:20]
+    print(titles)
+    
+    poster_paths = []
+    for title in titles:
+        response = requests.get(f"https://api.themoviedb.org/3/search/movie?api_key={API_KEY}&query={title}")
+        results = response.json().get('results')
+        
+        if len(results)>0:
+            info = results[0]
+
+            if(info.get('poster_path')):
+                url = 'https://image.tmdb.org/t/p/original/'+info.get('poster_path')
+                poster_paths.append(url)
+        
+        else:
+            poster_paths.append('https://user-images.githubusercontent.com/24848110/33519396-7e56363c-d79d-11e7-969b-09782f5ccbab.png')
+
+
+    response_body = json.dumps({
+        'titles': titles,
+        'poster_paths': poster_paths,
+    })
+
+    return response_body
+
 @api.route('/get-page')
 def get_page():
     
     page_num = request.args.get('page_num', type=int)
     page_length = int(request.args['page_length'])
-
-    movie_data = pd.read_csv("final_data/new_moviedata.csv")
 
     total_pages = len(movie_data)/page_length
 
