@@ -73,7 +73,7 @@ class User(Document):
     first_name = StringField(required = True)
     last_name = StringField(required = True)
     email = StringField(required = True, unique = True)
-    password_hash = BinaryField(required=True)
+    password_hash = BinaryField(required=False)
 
     def set_password(self, password):
         password_bytes = password.encode('utf-8')
@@ -83,7 +83,7 @@ class User(Document):
     def check_password(self, password):
         password_bytes = password.encode('utf-8')
         return bcrypt.checkpw(password_bytes, self.password_hash)
-    
+
     movie = ListField(StringField())
 
 
@@ -246,6 +246,8 @@ def get_page():
 @api.route('/get-film-queue')
 def get_film_queue():
 
+    token = request.args.get("token", type=str)
+
     titles = ['Eraserhead', 'Top Gun', 'Hellraiser', 'Pirates Of The Caribbean: On Stranger Tides']
 
     poster_paths = []
@@ -276,3 +278,22 @@ def post_film_queue():
     title = request.args.get('title', type=str)
 
     print(title)
+
+@api.route('/get-profile')
+def get_user():
+
+    token = request.args.get('token', type=str)
+
+    user_info = {
+        'first_name': "Will",
+        'last_name': 'Ingersoll',
+        'email': 'wfingersoll@gmail.com',
+        'movie': ['Top Gun', 'Eraserhead']
+    }
+
+    return user_info
+
+@api.route('/post-user-info', methods=['POST'])
+def post_user():
+    dummy_token = {'token': "12345"}
+    return dummy_token
