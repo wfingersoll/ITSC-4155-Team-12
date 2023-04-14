@@ -11,20 +11,23 @@ const Navbar = () => {
 	const [open, setOpen] = useState(false)
 	const [films, setFilms] = useState(null)
 	const [emptyCells, setEmptyCells] = useState([])
+	const [token, setToken] = useState(null)
 
 	const handleOpen = () => {
 		setOpen(!open);
 	}
 
 	useEffect (() => {
-		getFilmList();
+		if(sessionStorage.getItem('token')){
+			setToken(sessionStorage.getItem('token'))
+			getFilmList();
+		}
 	}, [])
 
 	const getFilmList = async () => {
-
 		axios({
             method: "GET",
-            url: "/get-film-queue",
+            url: "/get-film-queue?token="+token,
         }).then(response => {
             const res = response.data;
 			const empty_cells_temp = []
@@ -67,7 +70,19 @@ return (
 		<NavLink to="/search" activeStyle>
 			Search
 		</NavLink>
-		<button className="dropdown-button" onClick={handleOpen}>Film Queue</button>
+		{ !token &&
+			<NavLink to="/login" acti>
+				Login
+			</NavLink>
+		}
+		{ token && 
+			<NavLink to="/profile" activeStyle>
+			Profile
+			</NavLink>
+		}
+		{ films && 
+			<button className="dropdown-button" onClick={handleOpen}>Film Queue</button>
+		}
 		</NavMenu>
 	</Nav>{ films &&
 	<div className={open ? "dropdown-queue":"dropdown-queue-closed"}>

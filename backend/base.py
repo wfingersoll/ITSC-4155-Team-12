@@ -78,8 +78,6 @@ class User(Document):
     last_name = StringField(required = True)
     email = StringField(required = True, unique = True)
     password_hash = BinaryField(required=True)
-    token = StringField()
-    session_id = StringField()
 
     def set_password(self, password):
         password_bytes = password.encode('utf-8')
@@ -89,7 +87,7 @@ class User(Document):
     def check_password(self, password):
         password_bytes = password.encode('utf-8')
         return bcrypt.checkpw(password_bytes, self.password_hash)
-    
+
     movie = ListField(StringField())
 
     ##example usage: 
@@ -262,6 +260,8 @@ def get_page():
 @api.route('/get-film-queue')
 def get_film_queue():
 
+    token = request.args.get("token", type=str)
+
     titles = ['Eraserhead', 'Top Gun', 'Hellraiser', 'Pirates Of The Caribbean: On Stranger Tides']
 
     poster_paths = []
@@ -292,29 +292,3 @@ def post_film_queue():
     title = request.args.get('title', type=str)
 
     print(title)
-
-#needed for login - token
-def verify_credientials(username, password):
-    # return true if creds are valid flase otherwise
-    pass
-
-# define create_access_token funct
-def create_access_token(identity):
-    # generate access token using the "identity" provided
-    pass 
-
-#login route 
-@api.route('/login')
-def login():
-    # get username and passowrd from the request
-    username = request.json.get('username', None)
-    passowrd = request.json.get('passowrd', None)
-
-    #verify user creds
-    if verify_credientials(username, passowrd):
-        #generate new access token 
-        access_token = create_access_token(identity = username)
-        return jsonify(access_token = access_token), 200
-    else: 
-        return jsonify({'msg': "Invalid username or password."}), 401
-    
