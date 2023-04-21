@@ -12,7 +12,7 @@ from pymongo import MongoClient
 from mongoengine import connect, StringField, IntField, ListField, Document, BinaryField
 import bcrypt 
 import jwt 
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, jwt_required
 from flask import jsonify, request 
 import datetime #think needed for token?
 
@@ -113,7 +113,6 @@ if API_KEY is None:
 
 @api.route('/search-prod-info')
 def search_prod_info():
-
 
     query = request.args.get('query', default=None, type=str)
     
@@ -296,14 +295,19 @@ def post_film_queue():
     print(title)
 
 # needed for login - token
+#verify user credentials
 def verify_credientials(username, password):
     # return true if creds are valid flase otherwise
-    pass
+    if username == 'user1' and password == 'password':
+        return True
+    else: 
+     return False
 
 # define create_access_token funct
 def create_access_token(identity):
     # generate access token using the "identity" provided
-    pass 
+    access_token = create_access_token(identity=identity)
+    return access_token 
 
 #login route 
 @api.route('/login')
@@ -319,3 +323,13 @@ def login():
         return jsonify(access_token = access_token), 200
     else: 
         return jsonify({'msg': "Invalid username or password."}), 401
+    
+# route for adding a film to the queue (requires authentication)
+@api.route('/post-film-queue', methods=['POST'])
+@jwt_required()
+def post_film_queue():
+    title = request.args.get('title', type=str)
+    print(title)
+    # replace with your own logic for adding a film to the queue
+    return jsonify({'msg': 'Film added to the queue.'}), 200
+
