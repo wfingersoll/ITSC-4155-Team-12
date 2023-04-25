@@ -11,6 +11,10 @@ import os
 from pymongo import MongoClient
 from mongoengine import connect, StringField, IntField, ListField, Document, BinaryField
 import bcrypt 
+import jwt 
+from flask_jwt_extended import create_access_token, jwt_required
+from flask import jsonify, request 
+import datetime #think needed for token?
 
 
 movie_data = pd.read_csv("final_data/new_moviedata.csv")
@@ -73,7 +77,9 @@ class User(Document):
     first_name = StringField(required = True)
     last_name = StringField(required = True)
     email = StringField(required = True, unique = True)
-    password_hash = BinaryField(required=False)
+    password_hash = BinaryField(required=True)
+    token = StringField()
+    session_id = StringField()
 
     def set_password(self, password):
         password_bytes = password.encode('utf-8')
@@ -86,6 +92,16 @@ class User(Document):
 
     movie = ListField(StringField())
 
+    ##example usage: 
+    # 1. create a new user object and set the password 
+    # new_user = User(first_name = 'John', last_name = 'Wick', email = 'johnwick@gmail.com')
+    # new_user.set_password('password')
+    # #save the user to the db 
+    # new_user.save()
+
+    # #2. retrieve the user based on their token
+    # retrieved_user = User.objects(token = new_user.token).first()
+    
 
 #tmdb api connect
 TMDB_API_KEY = "21742194230c942f4f9ca9b6b7e27659"
@@ -97,7 +113,6 @@ if API_KEY is None:
 
 @api.route('/search-prod-info')
 def search_prod_info():
-
 
     query = request.args.get('query', default=None, type=str)
     
@@ -279,21 +294,42 @@ def post_film_queue():
 
     print(title)
 
-@api.route('/get-profile')
-def get_user():
+# needed for login - token
+#verify user credentials
+def verify_credientials(username, password):
+    # return true if creds are valid flase otherwise
+    if username == 'user1' and password == 'password':
+        return True
+    else: 
+     return False
 
-    token = request.args.get('token', type=str)
+# define create_access_token funct
+def create_access_token(identity):
+    # generate access token using the "identity" provided
+    access_token = create_access_token(identity=identity)
+    return access_token 
 
-    user_info = {
-        'first_name': "Will",
-        'last_name': 'Ingersoll',
-        'email': 'wfingersoll@gmail.com',
-        'movie': ['Top Gun', 'Eraserhead']
-    }
+#login route 
+@api.route('/login')
+def login():
+    # get username and passowrd from the request
+    username = request.json.get('username', None)
+    passowrd = request.json.get('passowrd', None)
 
-    return user_info
+    #verify user creds
+    if verify_credientials(username, passowrd):
+        #generate new access token 
+        access_token = create_access_token(identity = username)
+        return jsonify(access_token = access_token), 200
+    else: 
+        return jsonify({'msg': "Invalid username or password."}), 401
+    
+# route for adding a film to the queue (requires authentication)
+@api.route('/post-film-queue', methods=['POST'])
+@jwt_required()
+def post_film_queue():
+    title = request.args.get('title', type=str)
+    print(title)
+    # replace with your own logic for adding a film to the queue
+    return jsonify({'msg': 'Film added to the queue.'}), 200
 
-@api.route('/post-user-info', methods=['POST'])
-def post_user():
-    dummy_token = {'token': "12345"}
-    return dummy_token
