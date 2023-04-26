@@ -26,7 +26,8 @@ const Film = () => {
                 title_year: res.year,
                 platforms: res.streaming_services,
                 similar: res.similar,
-                poster: res.poster_path
+                poster: res.poster_path,
+                content_warnings: res.content_warnings,
             }))
         })
     }
@@ -59,6 +60,10 @@ const Film = () => {
                             <tr>
                                 <th scope="row">Similar Films</th>
                                 <td className="individual-film-td">{movieData.similar.map((film) => <ul>{film}</ul>)}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Content Warnings</th>
+                                <td className="individual-film-td">{movieData.content_warnings.map((warning) =><ul>{warning}</ul>)}</td>
                             </tr>
                         </tbody>
                     </table>

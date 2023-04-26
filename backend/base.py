@@ -15,6 +15,8 @@ import jwt
 from flask_jwt_extended import create_access_token, jwt_required
 from flask import jsonify, request 
 import datetime #think needed for token?
+from uuid import uuid4
+
 
 
 movie_data = pd.read_csv("final_data/new_moviedata.csv")
@@ -75,11 +77,10 @@ connect('users')
 # user model created 
 class User(Document):
     first_name = StringField(required = True)
-    last_name = StringField(required = True)
+    last_name = StringField(required = False)
     email = StringField(required = True, unique = True)
     password_hash = BinaryField(required=True)
     token = StringField()
-    session_id = StringField()
 
     def set_password(self, password):
         password_bytes = password.encode('utf-8')
@@ -101,7 +102,9 @@ class User(Document):
 
     # #2. retrieve the user based on their token
     # retrieved_user = User.objects(token = new_user.token).first()
-    
+      
+cursor = User.objects(email='a@gmail.com').first()
+print(cursor.check_password('a'))
 
 #tmdb api connect
 TMDB_API_KEY = "21742194230c942f4f9ca9b6b7e27659"
@@ -165,6 +168,15 @@ def search_prod_info():
     similar_films = rec(response_body['movie_data']['movie_title'][0], movie_data)
     similar_films = [word.title() for word in similar_films]
 
+    dog_die_title = "https://www.doesthedogdie.com/dddsearch?q="+query
+    dog_die_headers = {"X-API-KEY": '21f1213241afbdfc6c6decf60f2ee241', 'Accept': 'application/json'}
+    dog_die_id_res = requests.get(dog_die_title, headers=dog_die_headers)
+    dog_die_id = dog_die_id_res.json().get('items')[0].get('id')
+
+    dog_die_media = "https://www.doesthedogdie.com/media/"+str(dog_die_id)
+    dog_die_res = requests.get(dog_die_media, headers=dog_die_headers).json()
+    topics = [elem.get('topic').get('name').capitalize() for elem in dog_die_res.get('topicItemStats') if elem.get('yesSum')>elem.get('noSum')]
+
     final_body = json.dumps({
         'title': response_body['movie_data']['movie_title'][0].title(),
         'director': response_body['movie_data']['director_name'][0],
@@ -173,13 +185,14 @@ def search_prod_info():
         'poster_path': response_body['tmdb_info']['poster_path'],
         'year': response_body['movie_score']['release'],
         'streaming_services': response_body['tmdb_info']['streaming_services'],
-        'similar': similar_films
+        'similar': similar_films,
+        'content_warnings': topics
     })
 
     return final_body
 
 @api.route('/list-search')
-def listsearch():
+def list_search():
 
     query = request.args.get('query', default=None, type=str)
     
@@ -258,12 +271,13 @@ def get_page():
 
     return response_body
 
-@api.route('/get-film-queue')
+@api.route('/get-film-queue', methods=['POST'])
 def get_film_queue():
+    token = request.json.get('token', None)
 
-    token = request.args.get("token", type=str)
+    titles = User.objects(token=token).first().movie
 
-    titles = ['Eraserhead', 'Top Gun', 'Hellraiser', 'Pirates Of The Caribbean: On Stranger Tides']
+    print(titles)
 
     poster_paths = []
     for title in titles:
@@ -287,49 +301,95 @@ def get_film_queue():
 
     return response_body
 
-@api.route('/post-film-queue')
-def post_film_queue():
-
-    title = request.args.get('title', type=str)
-
-    print(title)
-
 # needed for login - token
 #verify user credentials
 def verify_credientials(username, password):
     # return true if creds are valid flase otherwise
-    if username == 'user1' and password == 'password':
-        return True
-    else: 
-     return False
+    retrieved_user = User.objects(email=username).first()
+    if(retrieved_user):
+        if retrieved_user.check_password(password):
+            return True
+    else:
+        return False
 
 # define create_access_token funct
-def create_access_token(identity):
+def create_access_token():
     # generate access token using the "identity" provided
-    access_token = create_access_token(identity=identity)
+    access_token = uuid4()
     return access_token 
 
+@api.route('/signup', methods=["POST"])
+def signup():
+    name = request.json.get('name', None)
+    username = request.json.get('email', None)
+    password = request.json.get('password', None)
+
+    if(verify_credientials(username, password)):
+        return jsonify({'msg': 'user already in database'}), 401
+    else:
+        new_user = User(email=username, first_name=name)
+        new_user.set_password(password)
+        access_token=str(create_access_token())
+        new_user.token=access_token
+        new_user.save()
+        return jsonify(token = access_token), 200
+
 #login route 
-@api.route('/login')
+@api.route('/login',  methods=["POST"])
 def login():
-    # get username and passowrd from the request
-    username = request.json.get('username', None)
-    passowrd = request.json.get('passowrd', None)
+    # get username and password from the request
+    username = request.json.get('email', None)
+    password = request.json.get('password', None)
+
+    print(username)
 
     #verify user creds
-    if verify_credientials(username, passowrd):
+    if verify_credientials(username, password):
         #generate new access token 
-        access_token = create_access_token(identity = username)
-        return jsonify(access_token = access_token), 200
+        access_token = User.objects(email=username).first().token
+        return jsonify(token = access_token), 200
     else: 
         return jsonify({'msg': "Invalid username or password."}), 401
     
+
+    
 # route for adding a film to the queue (requires authentication)
 @api.route('/post-film-queue', methods=['POST'])
-@jwt_required()
 def post_film_queue():
-    title = request.args.get('title', type=str)
-    print(title)
+    title = request.json.get('title', None)
+    token = request.json.get('token', None)
+    retrieved_user = User.objects(token=token).first()
+    retrieved_user.movie.append(title)
+    retrieved_user.save()
+    print(retrieved_user.movie)
     # replace with your own logic for adding a film to the queue
     return jsonify({'msg': 'Film added to the queue.'}), 200
 
+@api.route('/remove-film-queue', methods=['POST'])
+def remove_film_queue():
+    title = request.json.get('title', None)
+    token = request.json.get('token', None)
+
+    retrieved_user = User.objects(token=token).first()
+    retrieved_user.movie.remove(title)
+    retrieved_user.save()
+    print(retrieved_user.movie)
+    # replace with your own logic for adding a film to the queue
+    return jsonify({'msg': 'Film added to the queue.'}), 200
+
+@api.route('/post-user-info', methods=['POST'])
+def post_user():
+    dummy_token = {'token': "12345"}
+    return dummy_token
+
+@api.route('/get-profile', methods=['POST'])
+def get_profile():
+    token = request.json.get('token', None)
+
+    retrieved_user = User.objects(token=token).first()
+    fname = retrieved_user.first_name
+    lname = retrieved_user.last_name
+    email = retrieved_user.email
+    movies = retrieved_user.movie
+
+    return {"first_name": fname, "last_name": lname, "email": email, "movie": movies}

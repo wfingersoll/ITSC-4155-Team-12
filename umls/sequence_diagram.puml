@@ -1,0 +1,54 @@
+@startuml
+actor user
+entity frontend
+entity backend 
+database database
+
+group search 
+user -> frontend : search (query)
+frontend -> backend : list_search(query)
+backend -> frontend : search response
+frontend -> user : display search response
+end
+group film queue
+user -> frontend : add to film queue (title, token)
+note right: User must be signed into access film queue
+frontend -> backend : post_film_queue (title, token)
+backend -> database: database [token] [movies] = title
+backend -> frontend: post film response
+frontend -> user: display updated film queue
+end
+group paginate homepage
+user -> frontend : change page (page_number(optional))
+frontend -> backend : get_page(page_number)
+backend -> frontend : get page response
+frontend -> user : display updated home page
+end
+group login 
+user -> frontend : login(user_name, password)
+note right: User does not have to sign up prior, will create account if none exists
+frontend -> backend : get_user(token)
+backend -> database : database [token]
+database -> backend : return user info
+backend -> frontend : database response
+frontend -> user : navigate to profile
+end 
+group profile
+user -> frontend : naviagte to profile
+note right: User must be logined to access profile page
+frontend -> backend : get_user(token)
+backend -> database : database [token]
+database -> backend : return user info
+backend -> frontend : database response
+frontend -> user : navigate to user page
+end
+group view film
+user -> frontend: select film icon
+note right: User can select a film from Queue, Home, or Search
+frontend -> backend: search_prod_info(title)
+backend -> backend: reccomendation(title)
+backend -> frontend: film info response
+frontend -> user: navigate to film info page
+end
+
+@enduml

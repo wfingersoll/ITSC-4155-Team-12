@@ -1,0 +1,35 @@
+@startuml
+title Theoretical Deployment Diagram
+
+node Client[
+    Web Browser
+]
+
+node Server[
+    ReactJS
+    ---
+    - Controllers
+    - UI
+    ===
+    Flask 
+    ---
+    - Data Access 
+    - Logic
+    ===
+    MongoDB
+    ---
+    User Data
+]
+
+folder Data[
+    Movie Data
+]
+
+node MovieDB_Server[
+    The MovieDatabase Server
+]
+
+Client ---> Server : Client Server Connection (https)
+Server ---> MovieDB_Server : Client  Server Connection (https)
+Server ---> Data : Local Folder Access
+@enduml

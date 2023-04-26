@@ -1,0 +1,12 @@
+@startuml
+package "Client" #61a0e8{
+    [UI: \nHome Page\nFilm Page\nSearch Page\nProfile Page\nLogin Page\nNavbar\nFilm Queue]
+    [Controllers:\nHome\n- Contains pageable film grid\nFilm\n- Shows individual film info\nSearch\n- Allows users to search grid of films\nProfile\n- Allows users to view profile info\nLogin\n- Redirects to Home\n- Allows users to sign in]
+}
+package "Server" #e89161{
+    [Data Access:\nRead\nWrite\nUpdate\nDelete]
+    [Server Agents:\nMongoDB\nLocal Data Cache]
+}
+
+
+@enduml

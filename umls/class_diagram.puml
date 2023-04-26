@@ -1,0 +1,92 @@
+@startuml
+title Movie Database
+package "backend" #e89161{
+class Base{
+    ~ DataFrame movie_data
+    ~ String API_KEY
+    create_similarity(Dataframe) : Dataframe ndarray
+    rec(str, Dataframe) : list
+    convert_to_list(str) : list
+    search_prod_info(str): JSON
+    list_search(str): JSON
+    get_page(int): JSON
+    get_film_queue(str): JSON
+    post_film_queue(str): JSON
+    get_profile(str): JSON
+    post_user(str): JSON
+}
+
+class User{
+    ~ String first_name
+    ~ String last_name
+    ~ String email
+    ~ String password
+    ~ String token
+    ~ List movies
+    set_password(str): void
+    check_password(str): str
+}
+}
+
+package "frontend" #61a0e8{
+class App {
+    ~ String token
+    Class Home
+    Class Search 
+    Class Login 
+    Class Profile 
+    Class Film 
+}
+
+class Navbar{
+    -films
+    handleOpen(): void
+    useEffect(): void
+    getFilmList(): JSON
+}
+
+class Home {
+    - Integer pageNumber
+    - Integer pageLength
+    - Map movieData
+    UseEffect(): void
+    getData() : JSON
+}
+
+class Search {
+    - String query 
+    - Map movieData 
+    getData(): JSON
+}
+
+class Film {
+    - String title 
+    - Map movieData
+    useEffect(): void
+    getData(): JSON
+}
+
+class Login {
+    handleSubmit(): void
+}
+
+class Profile {
+    - Map User
+    useEffect(): void
+    getProfile(): void
+}
+
+
+}
+Home <|--- Navbar
+App *--- Home
+Search <|--- Navbar
+App *--- Search
+Login <|--- Navbar
+App *--- Login
+Profile <|--- Navbar
+App *--- Profile
+Film <|--- Navbar
+App *--- Film
+Base o--- User
+@enduml

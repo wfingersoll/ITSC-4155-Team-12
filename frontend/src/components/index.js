@@ -11,7 +11,7 @@ const Navbar = () => {
 	const [open, setOpen] = useState(false)
 	const [films, setFilms] = useState(null)
 	const [emptyCells, setEmptyCells] = useState([])
-	const [token, setToken] = useState(null)
+	const [refresh, setRefresh] = useState(false)
 
 	const handleOpen = () => {
 		setOpen(!open);
@@ -19,15 +19,15 @@ const Navbar = () => {
 
 	useEffect (() => {
 		if(sessionStorage.getItem('token')){
-			setToken(sessionStorage.getItem('token'))
 			getFilmList();
 		}
-	}, [])
+	}, [sessionStorage.getItem('token'), refresh])
 
 	const getFilmList = async () => {
 		axios({
-            method: "GET",
-            url: "/get-film-queue?token="+token,
+            method: "POST",
+            url: "/get-film-queue",
+			data: {'token': sessionStorage.getItem('token')}
         }).then(response => {
             const res = response.data;
 			const empty_cells_temp = []
@@ -60,6 +60,17 @@ const Navbar = () => {
         navigate(url, {replace: true});
     }
 
+	const handleRemove = async(title) => {
+		axios({
+			method: "POST",
+			url: "/remove-film-queue",
+			data: {'title': title, "token": sessionStorage.getItem('token')}
+		}).then(response => {
+			console.log(response)
+		})
+		setRefresh(!refresh)
+	}
+
 return (
 	<>
 	<Nav>
@@ -70,17 +81,17 @@ return (
 		<NavLink to="/search" activeStyle>
 			Search
 		</NavLink>
-		{ !token &&
+		{ !sessionStorage.getItem('token') &&
 			<NavLink to="/login" acti>
 				Login
 			</NavLink>
 		}
-		{ token && 
+		{ sessionStorage.getItem('token') && 
 			<NavLink to="/profile" activeStyle>
 			Profile
 			</NavLink>
 		}
-		{ films && 
+		{ films && sessionStorage.getItem('token') && 
 			<button className="dropdown-button" onClick={handleOpen}>Film Queue</button>
 		}
 		</NavMenu>
@@ -92,7 +103,9 @@ return (
                 <td className="film-queue-td">
 					<a className={title=='Empty' ? "film-queue-link-container-disabled":"film-queue-link-container"} href={"/film/"+title}>
 						<img className="film-queue-image" src={films.posters[idx]} ></img></a>
-						<p className="film-queue-text">{title}</p></td>)}
+						<p className="film-queue-text">{title}</p>
+						<button onClick={() => handleRemove(title)}>Remove from Queue</button>
+						</td>)}
 				<td className="film-queue-td">
 					<div className="film-queue-random-link-container">
 						<button onClick={()=>{goToRandomFilm()}} className="film-queue-random-button">CHOOSE RANDOM FILM</button>

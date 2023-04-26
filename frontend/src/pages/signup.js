@@ -4,19 +4,20 @@ import axios from "axios";
 import '../bootstrap.darkly.css';
 
 
-const Login = () => {
+const Signup = () => {
 
     const navigate = useNavigate()
     const [token, setToken] = useState(null)
     const [email, setEmail] = useState(null)
     const [password, setPassword] = useState(null)
+    const [name, setName] = useState(null)
 
     const handleSubmit = async(event) => {
         event.preventDefault();
         axios({
             method: "POST",
-            url: "/login",
-            data: {'email': email, "password": password}
+            url: "/signup",
+            data: {'email': email, "password": password, 'name': name}
         }).then(response => {
             const res = response.data;
             const temp_token = res.token;
@@ -33,12 +34,25 @@ const Login = () => {
         setPassword(e.target.value)
     }
 
+    const handleName = (e) => {
+        setName(e.target.value)
+    }
+
     return(
         <div className="login-form-container">
             <form className="login-form" onSubmit={handleSubmit}>
                 <div className="login-form-content">
-                    <h3 className="login-form-title">Sign in</h3>
+                    <h3 className="login-form-title">Sign Up</h3>
                     <div className="login-input-container">
+                        <div className="login-input-container">
+                            <label className="login-input-title">First Name:</label>
+                            <input
+                                type="name"
+                                placeholder="Enter Name"
+                                onChange={handleName}
+                                className="form-control mt-1"
+                            />
+                        </div>
                         <label className="login-input-title">Email Address:</label>
                         <input
                             type="email"
@@ -61,9 +75,8 @@ const Login = () => {
                     </div>
                 </div>
             </form>
-            <a href="/signup">Signup</a>
         </div>
     )
 }
 
-export default Login
+export default Signup

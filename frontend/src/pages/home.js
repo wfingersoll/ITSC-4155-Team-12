@@ -65,6 +65,17 @@ const Home = () => {
         }
     }
 
+    const addToQueue = async(title) => {
+        axios({
+            method: 'POST',
+            url: '/post-film-queue',
+            data: {'title': title, 'token': sessionStorage.getItem('token')}
+        }).then(response => {
+            console.log(response)
+        });
+        sessionStorage.setItem('refresh', true)
+    }
+
   return (
     
     //Currently hacky solution that relies on us only taking 18 items per page
@@ -85,7 +96,7 @@ const Home = () => {
                                 <a className="film-grid-link-container" href={"/film/"+title}>
                                 <img className="film-grid-image" src={movieData.posters[idx]} ></img></a>
                                 <p className="film-grid-text">{title}</p>
-                                <button className="film-grid-button">Add to Queue</button>
+                                <button className="film-grid-button" onClick={() => addToQueue(title)}>Add to Queue</button>
                                 </td>
                                 )}
                         </tr>

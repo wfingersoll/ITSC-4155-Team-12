@@ -6,6 +6,8 @@ import '../bootstrap.darkly.css';
 const Profile = () => {
     const [user, setUser] = useState(null)
 
+    const navigate = useNavigate()
+
     useEffect(() => {
         getProfile()
     }, [])
@@ -13,8 +15,9 @@ const Profile = () => {
     const getProfile = async () => {
         const token = sessionStorage.getItem('token')
         axios({
-            method: "GET",
-            url: "/get-profile?token="+token,
+            method: "POST",
+            url: "/get-profile",
+            data: {'token': sessionStorage.getItem('token')}
         }).then(response => {
             const res = response.data
             setUser({
@@ -24,6 +27,11 @@ const Profile = () => {
                 movies: res.movie,
             })
         })
+    }
+
+    const handleLogOut = () => {
+        sessionStorage.removeItem('token')
+        navigate("/", {replace:true});
     }
 
     return(
@@ -37,6 +45,7 @@ const Profile = () => {
                             <li>{title}</li>
                         )}
                     </ul>
+                    <button onClick={handleLogOut}>Sign Out</button>
                 </div>
             }
         </div>
