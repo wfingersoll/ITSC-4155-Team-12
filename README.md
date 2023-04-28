@@ -7,52 +7,52 @@ This repo is for ITSC-4155 group 12 of the 2023 spring semester.
 This site allows users to navigate through a vast array of films. These films are accomponied by relevant information, such as: actors, runtimes, critic scores, and what platforms one can find these films on. The site allows users to easily add films to a personal queue, and at the end of their session they can allow the site to
 randomly choose a film from their list.
 
-# Setup
-
-## Prerequisites
+# Prerequisites
     - NodeJS
-    - Make
     - Python
     - Pip
+    - Poetry
     - Virtualenv
+    - MongoDB
 
-## Backend 
+# Operating System
 
-IT IS RECCOMENDED TO RUN VSCODE IN ADMINISTRATOR MODE IF YOU ARE ON WINDOWS
+This project was designed to be run on Ubuntu systems
 
-The current project setup requires the use of a unix system, I highly recommend using the Windows Subsytem for Linux (WSL2: https://learn.microsoft.com/en-us/windows/wsl/install) if you want to use this project on Windows! If you are using Windows then the current iteration of Makefile will not work correctly.
+# Running the Project
 
-### Project Setup
+The project is run in three components:
+    - The Flask Backend
+    - The Node Frontend
+    - MongoDB
+    
+Because of this split, you will need three seperate command line instances to run the project
 
-This project requires the preinstallation of Make, Pip, and Virtualenv.
+## Backend
 
-To setup, simply run the command: `make init` while in the backend directory.
+To start the backend, make sure that poetry is installed. To install poetry, you can simply run the command: `pip install poetry`
 
-To test the project, simply run the command: `make test` while in the backend directory.
+Once poetry is installed, make sure you are in the "/backend" directory and run the command: `poetry install --sync` to install dependencies
 
-If additional dependencies are needed, they can be added using the command: `poetry add [DEPENDENCY NAME]`
+After all dependencies are installed, the server can be started with the command: `poetry run flask run`
 
-## Frontend 
+## Frontend
 
-Make sure that npm is installed before continuing.
+To start the frontend, make sure node is installed, then navigate to the "/frontend" directory and run the command: `npm start`
 
-To get started, React can be installed with the command: `npm install react`
+## MongoDB
 
-After react is installed, navigate to the frontend directory and run the command: `npm start` to start the server.
+To start the database, make sure MongoDB is installed first.
 
-For more information, check the readme in the frontend directory.
+After it is installed and a data path is set, run the command: `sudo mongod --dbpath [YOUR_DATA_PATH]`
 
-# TO RUN PROJECT
+### NOTE FOR WSL USERS
 
-You must run flask app and react app seperately.
+This installation can be painful on Ubuntu 22.04 LTS as this project was designed in.
 
-for flask, make sure you are in the backend directory and run `poetry run flask run`
+A good installation process can be found here: https://learn.microsoft.com/en-us/windows/wsl/tutorials/wsl-database
 
-for react, make sure you are in the frontend directory and run `npm start`
-
-# API
-
-Currently the only api endpoint is "/search-prod-info?query={query}"
+After MongoDB is installed, it can be started with `sudo mongod --dbpath ~/data/db`
 
 ## Architecture 
 ## Cosine Similarity 
