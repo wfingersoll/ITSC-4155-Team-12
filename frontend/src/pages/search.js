@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import '../bootstrap.darkly.css';
 
-const Search = () => {
+const Search = ({refresh, onUpdate}) => {
     // new line start
     const [query, setQuery] = useState('')
     const [loading, setLoading] = useState(false)
@@ -25,6 +25,16 @@ const Search = () => {
             }));
             setLoading(false)
         })
+    }
+
+    const addToQueue = async(title) => {
+        axios({
+            method: 'POST',
+            url: '/post-film-queue',
+            data: {'title': title, 'token': sessionStorage.getItem('token')}
+        }).then(response => {
+            console.log(response)
+        });
     }
 
     
@@ -55,23 +65,34 @@ const Search = () => {
                     <table className="film-grid-table">
                         <tbody>
                             <tr>
-                                {movieData.titles.slice(0, 6).map((title, idx) => 
+                            {movieData.titles.slice(0, 6).map((title, idx) => 
+                            <td className="film-grid-td">
+                                <a className="film-grid-link-container" href={"/film/"+title}>
+                                <img className="film-grid-image" src={movieData.posters[idx]} ></img></a>
+                                <p className="film-grid-text">{title}</p>
+                                <button className="film-grid-button" onClick={() => {addToQueue(title);onUpdate()}}>Add to Queue</button>
+                                </td>
+                                )}
+                        </tr>
+                        <tr>
+                            {movieData.titles.slice(6, 12).map((title, idx) => 
                                 <td className="film-grid-td">
-                                    <a className="film-grid-link-container" href={"/film/"+title}>
-                                    <img className="film-grid-image" src={movieData.posters[idx]} ></img></a>
-                                    <p className="film-grid-text">{title}</p>
-                                    <button className="film-grid-button">Add to Queue</button>
-                                    </td>
-                                    )}
-                            </tr>
-                            <tr>
-                                {movieData.titles.slice(6, 12).map((title, idx) => 
-                                <td className="film-grid-td"><a className="film-grid-link-container" href={"/film/"+title}><img className="film-grid-image" src={movieData.posters[idx+6]} ></img></a><p className="film-grid-text">{title}</p></td>)}
-                            </tr>
-                            <tr>
-                                {movieData.titles.slice(12, 18).map((title, idx) => 
-                                <td className="film-grid-td"><a className="film-grid-link-container" href={"/film/"+title}><img className="film-grid-image" src={movieData.posters[idx+12]} ></img></a><p className="film-grid-text">{title}</p></td>)}
-                            </tr>
+                                <a className="film-grid-link-container" href={"/film/"+title}>
+                                <img className="film-grid-image" src={movieData.posters[idx+6]} ></img></a>
+                                <p className="film-grid-text">{title}</p>
+                                <button className="film-grid-button" onClick={() => {addToQueue(title);onUpdate()}}>Add to Queue</button>
+                            </td>
+                            )}
+                        </tr>
+                        <tr>
+                            {movieData.titles.slice(12, 18).map((title, idx) => 
+                                <td className="film-grid-td">
+                                <a className="film-grid-link-container" href={"/film/"+title}>
+                                <img className="film-grid-image" src={movieData.posters[idx+12]} ></img></a>
+                                <p className="film-grid-text">{title}</p>
+                                <button className="film-grid-button" onClick={() => {addToQueue(title);onUpdate()}}>Add to Queue</button>
+                            </td>)}
+                        </tr>
                         </tbody>
                     </table>
                 </div>

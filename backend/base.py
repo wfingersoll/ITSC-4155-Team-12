@@ -3,21 +3,19 @@ from flask import request
 import pandas as pd
 import json
 import pickle 
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np 
 import requests  
 import os
 from pymongo import MongoClient
-from mongoengine import connect, StringField, IntField, ListField, Document, BinaryField
+from mongoengine import connect, StringField, ListField, Document, BinaryField
 import bcrypt 
-import jwt 
-from flask_jwt_extended import create_access_token, jwt_required
 from flask import jsonify, request 
-import datetime #think needed for token?
 from uuid import uuid4
 
+from similarity import Similarity
 
+
+similarity = Similarity()
 
 movie_data = pd.read_csv("final_data/new_moviedata.csv")
 movie_score = pd.read_csv("final_data/movie_score.csv")
@@ -27,45 +25,6 @@ nlp_model = 'models/nlp_model.pkl'
 #open the file in binary format: read
 clf = pickle.load(open(nlp_model, 'rb'))
 vect = pickle.load(open('models/transform.pkl', 'rb'))
-
-#function for similairty
-def create_similarity(data):
-    #create the count matrix as cv
-    cv = CountVectorizer()
-    #create the matrix based on the column comb which is the combination of them all 
-    count_matrix = cv.fit_transform(data['all'].values.astype('U'))
-    #create the similiaity score matrix 
-    similarity = cosine_similarity(count_matrix)
-    return data, similarity 
-
-#recommendation function-> rec
-def rec(m, data): #movies -> m
-    m = m.lower() #make the movies lowercase 
-    data, similarity = create_similarity(data)
-    #if the movie title is not there, then return sorry :(
-    if m not in data['movie_title'].unique(): 
-        return('The movie you requested is not in our database, sorry!')
-    else: 
-        #now when movie is found
-        i = data.loc[data['movie_title']==m].index[0]
-        m_list = list(enumerate(similarity[i]))
-        m_list = sorted(m_list, key = lambda x:x[1], reverse = True)
-        #the list is ten movies but we exclude the first itme since it is the one being requested
-        m_list = m_list[1:11]
-        #create empty array to add the movie titles 
-        l = []
-        for i in range(len(m_list)):
-            u =m_list[i][0]
-            l.append(data['movie_title'][u])
-        return l 
-
-#convert list of string to just a list -> ["abc", "def"]
-def convert_to_list(my_list):
-    my_list = my_list.split(' ","') 
-    #replacing the brackets []
-    my_list[0] = my_list[0].replace('["', '')
-    my_list[-1] = my_list[-1].replace('"]', '')
-    return my_list 
 
 api = Flask(__name__)
 
@@ -92,18 +51,7 @@ class User(Document):
         return bcrypt.checkpw(password_bytes, self.password_hash)
 
     movie = ListField(StringField())
-
-    ##example usage: 
-    # 1. create a new user object and set the password 
-    # new_user = User(first_name = 'John', last_name = 'Wick', email = 'johnwick@gmail.com')
-    # new_user.set_password('password')
-    # #save the user to the db 
-    # new_user.save()
-
-    # #2. retrieve the user based on their token
-    # retrieved_user = User.objects(token = new_user.token).first()
     
-
 #tmdb api connect
 TMDB_API_KEY = "21742194230c942f4f9ca9b6b7e27659"
 API_KEY = os.environ.get("TMDB_API_KEY")
@@ -163,7 +111,7 @@ def search_prod_info():
         response_body['tmdb_info']['streaming_services'] = [provider.get('provider_name', '') + ",\n" for provider in providers]
 
 
-    similar_films = rec(response_body['movie_data']['movie_title'][0], movie_data)
+    similar_films = similarity.rec(response_body['movie_data']['movie_title'][0], movie_data)
     similar_films = [word.title() for word in similar_films]
 
     dog_die_title = "https://www.doesthedogdie.com/dddsearch?q="+query

@@ -19,8 +19,8 @@ return (
     <Navbar refresh={refresh} onUpdate={() => setRefresh(!refresh)}/>
     <Routes>
         <Route path='/' element={<Home refresh={refresh} onUpdate={() => setRefresh(!refresh)}/>} />
-        <Route path='/search' element={<Search/>} />
-        <Route path='/film/:title' element={<Film/>} />
+        <Route path='/search' element={<Search refresh={refresh} onUpdate={() => setRefresh(!refresh)}/>} />
+        <Route path='/film/:title' element={<Film refresh={refresh} onUpdate={() => setRefresh(!refresh)}/>} />
         <Route path='/login' element={<Login/>} />
         <Route path="/profile" element={<Profile/>} />
         <Route path="/temp_page" element={<Temp/>} />

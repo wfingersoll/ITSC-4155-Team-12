@@ -4,7 +4,7 @@ import '../bootstrap.darkly.css';
 import { useParams } from "react-router-dom";
 
 
-const Film = () => {
+const Film = ({refresh, onUpdate}) => {
 
     const {title} = useParams()
     const [movieData, setMovieData] = useState(null)
@@ -33,36 +33,49 @@ const Film = () => {
     }
     //end of new line
 
+    const addToQueue = async(title) => {
+        axios({
+            method: 'POST',
+            url: '/post-film-queue',
+            data: {'title': title, 'token': sessionStorage.getItem('token')}
+        }).then(response => {
+            console.log(response)
+        });
+    }
+
     return (
         <div className="row">
             {movieData &&
                 <div className="individual-film-container">
                     <h1>{movieData.movie_title}</h1>
-                    <img className="individual-film-image" src={movieData.poster} width="256" height="428" />
+                    <div className="individual-film-image-container">
+                        <img className="individual-film-image" src={movieData.poster} width="256" height="428"/>
+                        <button className="submit-button" onClick={() => {addToQueue(title);onUpdate()}}>Add to Queue</button>
+                    </div>
                     <table className="individual-film-table">
                         <tbody>
                             <tr>
-                                <th scope="row">Director</th>
+                                <th className="individual-film-th" scope="row">Director</th>
                                 <td className="individual-film-td">{movieData.director_name}</td>
                             </tr>
                             <tr>
-                                <th scope="row">Genres</th>
+                                <th className="individual-film-th" scope="row">Genres</th>
                                 <td className="individual-film-td">{movieData.genres}</td>
                             </tr>
                             <tr>
-                                <th scope="row">Release Date</th>
+                                <th className="individual-film-th" scope="row">Release Date</th>
                                 <td className="individual-film-td">{movieData.title_year}</td>
                             </tr>
                             <tr>
-                                <th scope="row">Streaming Platforms</th>
+                                <th className="individual-film-th" scope="row">Streaming Platforms</th>
                                 <td className="individual-film-td">{movieData.platforms}</td>
                             </tr>
                             <tr>
-                                <th scope="row">Similar Films</th>
+                                <th className="individual-film-th" scope="row">Similar Films</th>
                                 <td className="individual-film-td">{movieData.similar.map((film) => <ul>{film}</ul>)}</td>
                             </tr>
                             <tr>
-                                <th scope="row">Content Warnings</th>
+                                <th className="individual-film-th" scope="row">Content Warnings</th>
                                 <td className="individual-film-td">{movieData.content_warnings.map((warning) =><ul>{warning}</ul>)}</td>
                             </tr>
                         </tbody>

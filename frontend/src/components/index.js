@@ -102,7 +102,7 @@ return (
 					<a className={title=='Empty' ? "film-queue-link-container-disabled":"film-queue-link-container"} href={"/film/"+title}>
 						<img className="film-queue-image" src={films.posters[idx]} ></img></a>
 						<p className="film-queue-text">{title}</p>
-						<button onClick={() => {handleRemove(title);onUpdate()}}>Remove from Queue</button>
+						<button className="submit-button"onClick={() => {handleRemove(title);onUpdate()}}>Remove</button>
 						</td>)}
 				<td className="film-queue-td">
 					<div className="film-queue-random-link-container">

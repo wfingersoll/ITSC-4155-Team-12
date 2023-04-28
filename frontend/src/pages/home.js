@@ -96,7 +96,7 @@ const Home = ({refresh, onUpdate}) => {
                                 <a className="film-grid-link-container" href={"/film/"+title}>
                                 <img className="film-grid-image" src={movieData.posters[idx]} ></img></a>
                                 <p className="film-grid-text">{title}</p>
-                                <button className="film-grid-button" onClick={() => {addToQueue(title);onUpdate()}}>Add to Queue</button>
+                                <button className="submit-button" onClick={() => {addToQueue(title);onUpdate()}}>Add to Queue</button>
                                 </td>
                                 )}
                         </tr>
@@ -106,7 +106,7 @@ const Home = ({refresh, onUpdate}) => {
                                 <a className="film-grid-link-container" href={"/film/"+title}>
                                 <img className="film-grid-image" src={movieData.posters[idx+6]} ></img></a>
                                 <p className="film-grid-text">{title}</p>
-                                <button className="film-grid-button" onClick={() => {addToQueue(title);onUpdate()}}>Add to Queue</button>
+                                <button className="submit-button" onClick={() => {addToQueue(title);onUpdate()}}>Add to Queue</button>
                             </td>
                             )}
                         </tr>
@@ -116,7 +116,7 @@ const Home = ({refresh, onUpdate}) => {
                                 <a className="film-grid-link-container" href={"/film/"+title}>
                                 <img className="film-grid-image" src={movieData.posters[idx+12]} ></img></a>
                                 <p className="film-grid-text">{title}</p>
-                                <button className="film-grid-button" onClick={() => {addToQueue(title);onUpdate()}}>Add to Queue</button>
+                                <button className="submit-button" onClick={() => {addToQueue(title);onUpdate()}}>Add to Queue</button>
                             </td>
                             )}
                         </tr>
