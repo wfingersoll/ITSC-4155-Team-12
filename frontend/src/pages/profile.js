@@ -82,8 +82,8 @@ const Profile = () => {
                             <li>{title}</li>
                         )}
                     </ul>
-                    <button onClick={handleUpdate}>Submit Profile Changes</button>
-                    <button onClick={handleLogOut}>Sign Out</button>
+                    <button className="submit-button" onClick={handleUpdate}>Submit Profile Changes</button>
+                    <button className="submit-button" onClick={handleLogOut}>Sign Out</button>
                     {invalidEmail &&
                         <div>
                             <h1>Email Already Taken</h1>    

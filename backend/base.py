@@ -266,8 +266,8 @@ def create_access_token():
 
 @api.route('/signup', methods=["POST"])
 def signup():
-    name = request.json.get('name', None)
-    username = request.json.get('email', None)
+    name = request.json.get('name', None).lower()
+    username = request.json.get('email', None).lower()
     password = request.json.get('password', None)
 
     if(verify_credientials(username, password)):
@@ -284,7 +284,7 @@ def signup():
 @api.route('/login',  methods=["POST"])
 def login():
     # get username and password from the request
-    username = request.json.get('email', None)
+    username = request.json.get('email', None).lower()
     password = request.json.get('password', None)
 
     print(username)
@@ -339,9 +339,9 @@ def get_profile():
 @api.route('/update-profile', methods=['POST'])
 def update_profile():
     token = request.json.get('token', None)
-    f_name = request.json.get('f_name', None)
-    l_name = request.json.get('l_name', None)
-    email = request.json.get('email', None)
+    f_name = request.json.get('f_name', None).lower()
+    l_name = request.json.get('l_name', None).lower()
+    email = request.json.get('email', None).lower()
 
     print(request.json)
     

@@ -10,6 +10,7 @@ const Login = () => {
     const [token, setToken] = useState(null)
     const [email, setEmail] = useState(null)
     const [password, setPassword] = useState(null)
+    const [invalid, setInvalid] = useState(false)
 
     const handleSubmit = async(event) => {
         event.preventDefault();
@@ -22,6 +23,8 @@ const Login = () => {
             const temp_token = res.token;
             sessionStorage.setItem('token', temp_token);
             navigate("/", {replace:true});
+        }).catch(error => {
+            setInvalid(true)
         })
     }
 
@@ -56,12 +59,17 @@ const Login = () => {
                             className="form-control mt-1"
                         />
                     </div>
+                    {invalid &&
+                            <p className="invalid-text">Invalid Username or Password</p>
+                        }
                     <div className="login-submit-container">
-                        <button type="submit" className="submit-button">Submit</button>
+                        <button type="submit" className="submit-button">Sign In</button>
+                    </div>
+                    <div className="login-submit-container">
+                        <button type="button" className="submit-button" onClick={() => {navigate("/signup")}}>Sign Up</button>
                     </div>
                 </div>
             </form>
-            <a href="/signup">Signup</a>
         </div>
     )
 }

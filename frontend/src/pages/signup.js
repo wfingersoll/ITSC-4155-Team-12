@@ -11,6 +11,7 @@ const Signup = () => {
     const [email, setEmail] = useState(null)
     const [password, setPassword] = useState(null)
     const [name, setName] = useState(null)
+    const [invalidEmail, setInvalidEmail] = useState(false)
 
     const handleSubmit = async(event) => {
         event.preventDefault();
@@ -23,6 +24,8 @@ const Signup = () => {
             const temp_token = res.token;
             sessionStorage.setItem('token', temp_token);
             navigate("/", {replace:true});
+        }).catch(error => {
+            setInvalidEmail(true)
         })
     }
 
@@ -42,7 +45,7 @@ const Signup = () => {
         <div className="login-form-container">
             <form className="login-form" onSubmit={handleSubmit}>
                 <div className="login-form-content">
-                    <h3 className="login-form-title">Sign Up</h3>
+                    <h1 className="login-form-title">Sign Up</h1>
                     <div className="login-input-container">
                         <div className="login-input-container">
                             <label className="login-input-title">First Name:</label>
@@ -52,7 +55,6 @@ const Signup = () => {
                                 onChange={handleName}
                                 className="form-control mt-1"
                             />
-                        </div>
                         <label className="login-input-title">Email Address:</label>
                         <input
                             type="email"
@@ -60,8 +62,6 @@ const Signup = () => {
                             onChange={handleEmail}
                             className="form-control mt-1"
                         />
-                    </div>
-                    <div className="login-input-container">
                         <label className="login-input-title">Password:</label>
                         <input 
                             type="password"
@@ -69,12 +69,18 @@ const Signup = () => {
                             onChange={handlePassword}
                             className="form-control mt-1"
                         />
-                    </div>
+                        </div>
                     <div className="login-submit-container">
-                        <button type="submit" className="login-submit-button">Submit</button>
+                        <button type="submit" className="submit-button">Submit</button>
                     </div>
                 </div>
+                </div>
             </form>
+            {invalidEmail &&
+                <div>
+                    <h2>Email Already Taken</h2>
+                </div>
+            }
         </div>
     )
 }

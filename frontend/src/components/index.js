@@ -93,7 +93,7 @@ return (
 			<button className="dropdown-button" onClick={handleOpen}>Film Queue</button>
 		}
 		</NavMenu>
-	</Nav>{ films &&
+	</Nav>{ films && sessionStorage.getItem('token') && 
 	<div className={open ? "dropdown-queue":"dropdown-queue-closed"}>
 			<table className="menu-queue">
 				<tr>
