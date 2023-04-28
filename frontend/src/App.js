@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Navbar from './components/index';
 import { BrowserRouter as Router, Routes, Route}
     from 'react-router-dom';
@@ -11,11 +11,14 @@ import Temp from "./pages/temp_page";
 import Signup from "./pages/signup";
 
 function App() {
+
+    const [refresh, setRefresh] = useState(false)
+
 return (
     <Router>
-    <Navbar />
+    <Navbar refresh={refresh} onUpdate={() => setRefresh(!refresh)}/>
     <Routes>
-        <Route path='/' element={<Home />} />
+        <Route path='/' element={<Home refresh={refresh} onUpdate={() => setRefresh(!refresh)}/>} />
         <Route path='/search' element={<Search/>} />
         <Route path='/film/:title' element={<Film/>} />
         <Route path='/login' element={<Login/>} />

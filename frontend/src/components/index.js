@@ -4,14 +4,13 @@ import { Nav, NavLink, NavMenu }
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const Navbar = () => {
+const Navbar = ({refresh, onUpdate}) => {
 
 	const navigate = useNavigate();
 
 	const [open, setOpen] = useState(false)
 	const [films, setFilms] = useState(null)
 	const [emptyCells, setEmptyCells] = useState([])
-	const [refresh, setRefresh] = useState(false)
 
 	const handleOpen = () => {
 		setOpen(!open);
@@ -68,7 +67,6 @@ const Navbar = () => {
 		}).then(response => {
 			console.log(response)
 		})
-		setRefresh(!refresh)
 	}
 
 return (
@@ -104,7 +102,7 @@ return (
 					<a className={title=='Empty' ? "film-queue-link-container-disabled":"film-queue-link-container"} href={"/film/"+title}>
 						<img className="film-queue-image" src={films.posters[idx]} ></img></a>
 						<p className="film-queue-text">{title}</p>
-						<button onClick={() => handleRemove(title)}>Remove from Queue</button>
+						<button onClick={() => {handleRemove(title);onUpdate()}}>Remove from Queue</button>
 						</td>)}
 				<td className="film-queue-td">
 					<div className="film-queue-random-link-container">

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import '../bootstrap.darkly.css';
+import Index from '../components/index';
 
-const Home = () => {
+const Home = ({refresh, onUpdate}) => {
 
     const [pageNumber, setPageNumber] = useState(0)
     const[pageLength, setPageLength] = useState(18)
@@ -73,7 +74,6 @@ const Home = () => {
         }).then(response => {
             console.log(response)
         });
-        sessionStorage.setItem('refresh', true)
     }
 
   return (
@@ -96,17 +96,29 @@ const Home = () => {
                                 <a className="film-grid-link-container" href={"/film/"+title}>
                                 <img className="film-grid-image" src={movieData.posters[idx]} ></img></a>
                                 <p className="film-grid-text">{title}</p>
-                                <button className="film-grid-button" onClick={() => addToQueue(title)}>Add to Queue</button>
+                                <button className="film-grid-button" onClick={() => {addToQueue(title);onUpdate()}}>Add to Queue</button>
                                 </td>
                                 )}
                         </tr>
                         <tr>
                             {movieData.titles.slice(6, 12).map((title, idx) => 
-                            <td className="film-grid-td"><a className="film-grid-link-container" href={"/film/"+title}><img className="film-grid-image" src={movieData.posters[idx+6]} ></img></a><p className="film-grid-text">{title}</p></td>)}
+                                <td className="film-grid-td">
+                                <a className="film-grid-link-container" href={"/film/"+title}>
+                                <img className="film-grid-image" src={movieData.posters[idx+6]} ></img></a>
+                                <p className="film-grid-text">{title}</p>
+                                <button className="film-grid-button" onClick={() => {addToQueue(title);onUpdate()}}>Add to Queue</button>
+                            </td>
+                            )}
                         </tr>
                         <tr>
                             {movieData.titles.slice(12, 18).map((title, idx) => 
-                            <td className="film-grid-td"><a className="film-grid-link-container" href={"/film/"+title}><img className="film-grid-image" src={movieData.posters[idx+12]} ></img></a><p className="film-grid-text">{title}</p></td>)}
+                                <td className="film-grid-td">
+                                <a className="film-grid-link-container" href={"/film/"+title}>
+                                <img className="film-grid-image" src={movieData.posters[idx+12]} ></img></a>
+                                <p className="film-grid-text">{title}</p>
+                                <button className="film-grid-button" onClick={() => {addToQueue(title);onUpdate()}}>Add to Queue</button>
+                            </td>
+                            )}
                         </tr>
                     </tbody>
                 </table>
