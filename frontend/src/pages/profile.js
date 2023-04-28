@@ -4,28 +4,29 @@ import axios from "axios";
 import '../bootstrap.darkly.css';
 
 const Profile = () => {
-    const [user, setUser] = useState(null)
+    const [fName, setFName] = useState("N/A")
+    const [lName, setLName] = useState("N/A")
+    const [email, setEmail] = useState("N/A")
+    const [movies, setMovies] = useState(["N/A", "N/A"])
+    const [invalidEmail, setInvalidEmail] = useState(false)
 
     const navigate = useNavigate()
 
     useEffect(() => {
         getProfile()
-    }, [])
+    }, [invalidEmail])
     
     const getProfile = async () => {
-        const token = sessionStorage.getItem('token')
         axios({
             method: "POST",
             url: "/get-profile",
             data: {'token': sessionStorage.getItem('token')}
         }).then(response => {
             const res = response.data
-            setUser({
-                first_name: res.first_name,
-                last_name: res.last_name,
-                email: res.email,
-                movies: res.movie,
-            })
+            setFName(res.first_name)
+            setLName(res.last_name)
+            setEmail(res.email)
+            setMovies(res.movie)
         })
     }
 
@@ -34,20 +35,61 @@ const Profile = () => {
         navigate("/", {replace:true});
     }
 
+    const handleUpdate = async() => {
+        axios({
+            method: "POST",
+            url: "/update-profile",
+            data: {
+                "token": sessionStorage.getItem('token'),
+                "f_name": fName,
+                "l_name": lName,
+                "email": email
+            }
+        }).then(response => {
+            console.log(response.status)
+        }).catch((error) => {
+            setInvalidEmail(true)
+        })
+    }
+
+    const updateFName = (e) => {
+        e.preventDefault()
+        setFName(e.target.value)
+    }
+
+    const updateLName = (e) => {
+        e.preventDefault()
+        setLName(e.target.value)
+    }
+    const updateEmail = (e) => {
+        e.preventDefault()
+        setEmail(e.target.value)
+    }
+
     return(
         <div>
-            {user &&
                 <div>
-                    <h2>{user.first_name} {user.last_name}</h2>
-                    <h2>{user.email}</h2>
+                    <h2>{fName}</h2>
+                    <form onSubmit={handleUpdate}>
+                        <textarea onChange={(e) => updateFName(e)}/>
+                    <h2>{lName}</h2>
+                        <textarea onChange={(e) => updateLName(e)}/>
+                    <h2>{email}</h2>
+                        <textarea onChange={(e) => updateEmail(e)}/>
+                    </form>
                     <ul>
-                        {user.movies.map((title) => 
+                        {movies.map((title) => 
                             <li>{title}</li>
                         )}
                     </ul>
+                    <button onClick={handleUpdate}>Submit Profile Changes</button>
                     <button onClick={handleLogOut}>Sign Out</button>
+                    {invalidEmail &&
+                        <div>
+                            <h1>Email Already Taken</h1>    
+                        </div>
+                    }
                 </div>
-            }
         </div>
     )
 }

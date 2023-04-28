@@ -76,8 +76,8 @@ db = client.users
 connect('users')
 # user model created 
 class User(Document):
-    first_name = StringField(required = True)
-    last_name = StringField(required = False)
+    first_name = StringField(required = False, unique = False)
+    last_name = StringField(required = False, unique = False)
     email = StringField(required = True, unique = True)
     password_hash = BinaryField(required=True)
     token = StringField()
@@ -102,9 +102,7 @@ class User(Document):
 
     # #2. retrieve the user based on their token
     # retrieved_user = User.objects(token = new_user.token).first()
-      
-cursor = User.objects(email='a@gmail.com').first()
-print(cursor.check_password('a'))
+    
 
 #tmdb api connect
 TMDB_API_KEY = "21742194230c942f4f9ca9b6b7e27659"
@@ -374,13 +372,9 @@ def remove_film_queue():
     retrieved_user.movie.remove(title)
     retrieved_user.save()
     print(retrieved_user.movie)
-    # replace with your own logic for adding a film to the queue
+
     return jsonify({'msg': 'Film added to the queue.'}), 200
 
-@api.route('/post-user-info', methods=['POST'])
-def post_user():
-    dummy_token = {'token': "12345"}
-    return dummy_token
 
 @api.route('/get-profile', methods=['POST'])
 def get_profile():
@@ -393,3 +387,18 @@ def get_profile():
     movies = retrieved_user.movie
 
     return {"first_name": fname, "last_name": lname, "email": email, "movie": movies}
+
+@api.route('/update-profile', methods=['POST'])
+def update_profile():
+    token = request.json.get('token', None)
+    f_name = request.json.get('f_name', None)
+    l_name = request.json.get('l_name', None)
+    email = request.json.get('email', None)
+
+    print(request.json)
+    
+    try:
+        db.user.update_one({"token": token}, { "$set": {"first_name": f_name, "last_name": l_name, "email": email}})
+        return jsonify({'msg': 'Update successful'}), 200
+    except:
+        return(jsonify({'msg': 'Duplicate Email'})), 401
