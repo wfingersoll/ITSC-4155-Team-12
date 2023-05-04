@@ -50,7 +50,7 @@ const Film = ({refresh, onUpdate}) => {
                     <h1>{movieData.movie_title}</h1>
                     <div className="individual-film-image-container">
                         <img className="individual-film-image" src={movieData.poster} width="256" height="428"/>
-                        <button className="submit-button" onClick={() => {addToQueue(title);onUpdate()}}>Add to Queue</button>
+                        <button className="submit-button-narrow" onClick={() => {addToQueue(title);onUpdate()}}>Add to Queue</button>
                     </div>
                     <table className="individual-film-table">
                         <tbody>

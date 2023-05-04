@@ -11,6 +11,7 @@ const Home = ({refresh, onUpdate}) => {
     const [prevButtonDisabled, setPrevButtonDisabled] = useState(true)
     const [nextButtonDisabled, setNextButtonDisabled] = useState(false)
     const [loading, setLoading] = useState(true)
+    const [hover, setHover] = useState(null)
 
     useEffect(() => {
         getData();
@@ -76,6 +77,10 @@ const Home = ({refresh, onUpdate}) => {
         });
     }
 
+    const changeHover = (index) => {
+        setHover(index)
+    }
+
   return (
     
     //Currently hacky solution that relies on us only taking 18 items per page
@@ -92,19 +97,19 @@ const Home = ({refresh, onUpdate}) => {
                     <tbody>
                         <tr>
                             {movieData.titles.slice(0, 6).map((title, idx) => 
-                            <td className="film-grid-td">
+                                <td className={hover==idx ? "film-grid-td" : "film-grid-td-unfocus"} onMouseEnter={() => {changeHover(idx)}}>
                                 <a className="film-grid-link-container" href={"/film/"+title}>
-                                <img className="film-grid-image" src={movieData.posters[idx]} ></img></a>
+                                <img className="film-grid-image" src={movieData.posters[idx]}></img></a>
                                 <p className="film-grid-text">{title}</p>
                                 { sessionStorage.getItem('token') &&
                                 <button className="submit-button" onClick={() => {addToQueue(title);onUpdate()}}>Add to Queue</button>
-                                } 
+                                }
                                 </td>
                                 )}
                         </tr>
                         <tr>
                             {movieData.titles.slice(6, 12).map((title, idx) => 
-                                <td className="film-grid-td">
+                                <td className={hover==idx+6 ? "film-grid-td" : "film-grid-td-unfocus"} onMouseEnter={() => {changeHover(idx+6)}}>
                                 <a className="film-grid-link-container" href={"/film/"+title}>
                                 <img className="film-grid-image" src={movieData.posters[idx+6]} ></img></a>
                                 <p className="film-grid-text">{title}</p>
@@ -116,7 +121,7 @@ const Home = ({refresh, onUpdate}) => {
                         </tr>
                         <tr>
                             {movieData.titles.slice(12, 18).map((title, idx) => 
-                                <td className="film-grid-td">
+                                <td className={hover==idx+12 ? "film-grid-td" : "film-grid-td-unfocus"} onMouseEnter={() => {changeHover(idx+12)}}>
                                 <a className="film-grid-link-container" href={"/film/"+title}>
                                 <img className="film-grid-image" src={movieData.posters[idx+12]} ></img></a>
                                 <p className="film-grid-text">{title}</p>

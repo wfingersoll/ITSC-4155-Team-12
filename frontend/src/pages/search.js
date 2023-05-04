@@ -9,6 +9,8 @@ const Search = ({refresh, onUpdate}) => {
     const [loading, setLoading] = useState(false)
     const [movieData, setMovieData] = useState(null)
     const navigate = useNavigate();    
+    const [hover, setHover] = useState(null)
+
     
     const getData = async (event) => {
         event.preventDefault();
@@ -36,6 +38,11 @@ const Search = ({refresh, onUpdate}) => {
             console.log(response)
         });
     }
+    
+
+    const changeHover = (index) => {
+        setHover(index)
+    }
 
     
     //end of new line
@@ -46,12 +53,12 @@ const Search = ({refresh, onUpdate}) => {
             <h1 className="mb-5">Search the MovieDB Catalog</h1>
             <div className="search-form-container">
                 <form onSubmit={getData}>
-                        <label htmlFor="query-input-id" style={{"font-size":"24px"}}className="form-label">Enter Film Title:</label>
+                        <label htmlFor="query-input-id" style={{"font-size":"24px","color":"white"}}className="form-label">Enter Film Title:</label>
                         <input type="text"
                                className="search-form"
                                onChange={e => setQuery(e.target.value)}
                         />
-                    <button type="submit" className="search-submit">Submit</button>
+                    <button type="submit" className="submit-button-narrow">Submit</button>
                 </form>
             </div>
             {loading && !movieData &&
@@ -70,7 +77,9 @@ const Search = ({refresh, onUpdate}) => {
                                 <a className="film-grid-link-container" href={"/film/"+title}>
                                 <img className="film-grid-image" src={movieData.posters[idx]} ></img></a>
                                 <p className="film-grid-text">{title}</p>
-                                <button className="film-grid-button" onClick={() => {addToQueue(title);onUpdate()}}>Add to Queue</button>
+                                { sessionStorage.getItem('token') &&
+                                <button className="submit-button" onClick={() => {addToQueue(title);onUpdate()}}>Add to Queue</button>
+                                }
                                 </td>
                                 )}
                         </tr>
@@ -80,7 +89,9 @@ const Search = ({refresh, onUpdate}) => {
                                 <a className="film-grid-link-container" href={"/film/"+title}>
                                 <img className="film-grid-image" src={movieData.posters[idx+6]} ></img></a>
                                 <p className="film-grid-text">{title}</p>
-                                <button className="film-grid-button" onClick={() => {addToQueue(title);onUpdate()}}>Add to Queue</button>
+                                { sessionStorage.getItem('token') &&
+                                <button className="submit-button" onClick={() => {addToQueue(title);onUpdate()}}>Add to Queue</button>
+                                }
                             </td>
                             )}
                         </tr>
@@ -90,7 +101,9 @@ const Search = ({refresh, onUpdate}) => {
                                 <a className="film-grid-link-container" href={"/film/"+title}>
                                 <img className="film-grid-image" src={movieData.posters[idx+12]} ></img></a>
                                 <p className="film-grid-text">{title}</p>
-                                <button className="film-grid-button" onClick={() => {addToQueue(title);onUpdate()}}>Add to Queue</button>
+                                { sessionStorage.getItem('token') &&
+                                <button className="submit-button" onClick={() => {addToQueue(title);onUpdate()}}>Add to Queue</button>
+                                }
                             </td>)}
                         </tr>
                         </tbody>

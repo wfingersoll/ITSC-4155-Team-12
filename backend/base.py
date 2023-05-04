@@ -147,8 +147,8 @@ def list_search():
         query+=".0"
     
     titles = movie_data[movie_data.movie_title.str.contains(query.lower())]['movie_title'].values.tolist()[:20]
-    print(titles)
-    
+    titles = [titles.title() for titles in titles]
+
     poster_paths = []
     for title in titles:
         response = requests.get(f"https://api.themoviedb.org/3/search/movie?api_key={API_KEY}&query={title}")
